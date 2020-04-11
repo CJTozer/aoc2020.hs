@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 95848097c7e20acbfc6c750576bc9279ef06f0bddfe8bcafa81eeb7a5d43f020
+-- hash: daaca3aab1e2b7b145d480297d4f0cb721d0724a8d3db9c6b6dc2c9aa4c7d771
 
 name:           advent
 version:        0.1.0.0
@@ -59,4 +59,5 @@ test-suite advent-test
   build-depends:
       advent
     , base >=4.7 && <5
+    , hspec
   default-language: Haskell2010
