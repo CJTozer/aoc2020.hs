@@ -25,3 +25,13 @@ main = hspec $ do
   describe "fuelNeeded" $ do
     it "returns 656 for [7, 14, 1969] input" $ do
       fuelNeeded [7, 14, 1969] `shouldBe` 656
+
+  describe "fuelForModuleAndFuel" $ do
+    it "14 input" $ do
+      fuelForModuleAndFuel 14 `shouldBe` 2
+
+    it "1969 input" $ do
+      fuelForModuleAndFuel 1969 `shouldBe` 966
+
+    it "100756 input" $ do
+      fuelForModuleAndFuel 100756 `shouldBe` 50346
