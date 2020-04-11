@@ -1,11 +1,11 @@
 module Main where
 
 import System.Environment
-import Lib
+import Day1
 
 main :: IO ()
 main = getArgs >>= runTest
 
 runTest :: [String] -> IO ()
-runTest ["1"] = someFunc
+runTest ["1"] = day1
 runTest _ = putStrLn "Please provide the scenario to run"
