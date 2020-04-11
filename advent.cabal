@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: daaca3aab1e2b7b145d480297d4f0cb721d0724a8d3db9c6b6dc2c9aa4c7d771
+-- hash: fedfcc27f623dc7646d1b400415a9f8e417bda0e4dc7501f7f3a9c79bfcbe9f9
 
 name:           advent
 version:        0.1.0.0
@@ -52,6 +52,7 @@ test-suite advent-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      Day1Spec
       Paths_advent
   hs-source-dirs:
       test
