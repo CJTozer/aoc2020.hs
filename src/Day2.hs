@@ -7,10 +7,33 @@ import Data.List.Split
 day2 :: IO ()
 day2 = do
   putStrLn "day2 start"
-  contents <- readFile "data/day2a"
-  let result = intCode contents
+  contents <- readFile "data/day2"
+  let result = determineInputs contents
   print $ show result
   putStrLn "day2 end"
+
+determineInputs :: String -> (Int, Int)
+determineInputs s = do
+  let ints = map read $ splitOn "," s
+  let nouns = [0..99]
+  let verbs = [0..99]
+  checkAllInputs ints nouns verbs
+
+checkAllInputs :: [Int] -> [Int] -> [Int] -> (Int, Int)
+checkAllInputs _ _ [] = (-1, -1) -- Run out of verbs, no match :(
+checkAllInputs ints [] verbs = checkAllInputs ints [0..99] (tail verbs) -- Out of nouns, move to next verb
+checkAllInputs ints (n:ns) (v:vs) =
+  case checkInputs ints n v of
+    True -> (n, v)
+    False -> checkAllInputs ints ns (v:vs)
+
+checkInputs :: [Int] -> Int -> Int -> Bool
+checkInputs ints noun verb = do
+  let input = head ints : [noun, verb] ++ drop 3 ints
+  let result = head $ processCmds 0 input
+  case result of
+    19690720 -> True
+    _ -> False
 
 intCode :: String -> [Int]
 intCode s = do
