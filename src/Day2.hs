@@ -2,6 +2,8 @@
 
 module Day2 where
 
+import Data.List.Split
+
 day2 :: IO ()
 day2 = do
   putStrLn "day2 start"
@@ -11,4 +13,6 @@ day2 = do
   putStrLn "day2 end"
 
 intCode :: String -> [Int]
-intCode _ = [0]
+intCode s = do
+  let ints = map read $ splitOn "," s
+  ints
