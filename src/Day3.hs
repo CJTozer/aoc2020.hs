@@ -12,8 +12,8 @@ day2 = do
   let w1:w2:_ = ls
   putStrLn "day2 end"
 
-data Hor = Hor { x1::Int, x2::Int, yy::Int }
-data Ver = Ver { xx::Int, y1::Int, y2::Int }
+data Hor = Hor { x1::Int, x2::Int, yy::Int } deriving (Show, Eq)
+data Ver = Ver { xx::Int, y1::Int, y2::Int } deriving (Show, Eq)
 type Point = (Int, Int)
 type WireTracks = ([Hor], [Ver])
 type WireState = ([String], Point, WireTracks)
@@ -47,16 +47,16 @@ collectInstructions old_state = do
     'U' -> do
       let new_y::Int = y + read (tail op)
       let new_v_tracks = (Ver x y new_y) : v_tracks
-      (rem_ops, (x, new_y), (h_tracks, new_v_tracks))
+      collectInstructions (rem_ops, (x, new_y), (h_tracks, new_v_tracks))
     'D' -> do
       let new_y::Int = y - read (tail op)
       let new_v_tracks = (Ver x y new_y) : v_tracks
-      (rem_ops, (x, new_y), (h_tracks, new_v_tracks))
+      collectInstructions (rem_ops, (x, new_y), (h_tracks, new_v_tracks))
     'R' -> do
       let new_x::Int = x + read (tail op)
       let new_h_tracks = (Hor x new_x y) : h_tracks
-      (rem_ops, (new_x, y), (new_h_tracks, v_tracks))
+      collectInstructions (rem_ops, (new_x, y), (new_h_tracks, v_tracks))
     'L' -> do
       let new_x::Int = x - read (tail op)
       let new_h_tracks = (Hor x new_x y) : h_tracks
-      (rem_ops, (new_x, y), (new_h_tracks, v_tracks))
+      collectInstructions (rem_ops, (new_x, y), (new_h_tracks, v_tracks))
