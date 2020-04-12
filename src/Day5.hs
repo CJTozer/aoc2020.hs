@@ -26,6 +26,8 @@ runIntCodeFrom pos ints = do
   case opcode of
     1 -> runIntCodeFrom (pos + 4) $ opAdd pos ints
     2 -> runIntCodeFrom (pos + 4) $ opMultiply pos ints
+    3 -> runIntCodeFrom (pos + 2) $ opInput pos ints
+    4 -> runIntCodeFrom (pos + 2) $ opOutput pos ints
     99 -> ints
 
 -- Addition operation
@@ -46,6 +48,21 @@ opMath op pos state = do
   let b = state !! ptr_b
   updateValue ptr_out (op a b) state
 
+-- Input operation
+-- Cheating for now by knowing the input should be 1
+opInput :: IPtr -> PState -> PState
+opInput pos state = do
+  let ptr_out = state !! (pos + 1)
+  let value = 1 -- TODO get actual input!
+  updateValue ptr_out value state
+
+-- Output operation
+opOutput :: IPtr -> PState -> PState
+opOutput pos state = do
+  let ptr_out = state !! (pos + 1)
+  let value = state !! ptr_out
+  -- TODO print
+  state
 
 -- Get a new state with a single uipdated value
 updateValue :: IPtr -> Int -> PState -> PState

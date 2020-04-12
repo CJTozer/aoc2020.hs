@@ -17,3 +17,9 @@ test_day5 = hspec $ do
 
     it "1,1,1,4,99,5,6,0,99" $ do
       runIntCode "1,1,1,4,99,5,6,0,99" `shouldBe` [30,1,1,4,2,5,6,0,99]
+
+    it "Test input: 3,3,99,0" $ do
+      runIntCode "3,3,99,1" `shouldBe` [3,3,99,1]
+
+    it "Test output: 1,0,0,0,4,0,99" $ do
+      runIntCode "1,0,0,0,4,0,99" `shouldBe` [2,0,0,0,4,0,99]
