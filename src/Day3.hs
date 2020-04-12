@@ -20,8 +20,7 @@ closestIntersection :: WireTracks -> WireTracks -> Int
 closestIntersection (h1, v1) (h2, v2) = do
   let intersections = (allIntersections h1 v2) ++ (allIntersections h2 v1)
   let manhattan_ds = sort [(abs x) + (abs y) | (x, y) <- intersections]
-  -- Ignore origin.  @@@ TODO but only when it's a Horiz/Vert start...
-  head (manhattan_ds)
+  head (tail manhattan_ds)
 
 data Hor = Hor { x1::Int, x2::Int, yy::Int } deriving (Show, Eq)
 data Ver = Ver { xx::Int, y1::Int, y2::Int } deriving (Show, Eq)
