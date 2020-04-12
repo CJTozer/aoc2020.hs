@@ -17,6 +17,8 @@ day3 = do
   let (w2_tracks, w2_ps) = parseWire w2
   let closest = closestIntersection w1_tracks w2_tracks
   print (show closest)
+  let fastest = fastestIntersection (w1_tracks, w1_ps) (w2_tracks, w2_ps)
+  print (show fastest)
   putStrLn "day2 end"
 
 -- Get the intersection with the shortest delay
@@ -24,7 +26,9 @@ fastestIntersection :: WireData-> WireData -> Int
 fastestIntersection ((h1, v1), ps1) ((h2, v2), ps2) = do
   let intersections = (allIntersections h1 v2) ++ (allIntersections h2 v1)
   let ds = sort [(distanceToIntersection p ps1) + (distanceToIntersection p ps2) | p <- intersections]
-  head (tail ds)
+  case head ds of
+    0 -> head (tail ds)
+    _ -> head ds
 
 distanceToIntersection :: Point -> [Point] -> Int
 -- distanceToIntersection t ps | trace ("distanceToIntersection " ++ (show t) ++ " " ++ (show ps)) False = undefined
