@@ -19,7 +19,7 @@ day3 = do
   print (show closest)
   let fastest = fastestIntersection (w1_tracks, w1_ps) (w2_tracks, w2_ps)
   print (show fastest)
-  putStrLn "day2 end"
+  putStrLn "day3 end"
 
 -- Get the intersection with the shortest delay
 fastestIntersection :: WireData-> WireData -> Int
