@@ -30,3 +30,25 @@ test_day4 = hspec $ do
 
     it "repeat in middle" $ do
       containsRepeated "012234" `shouldBe` True
+
+  describe "containsThreeRepeats" $ do
+    it "no repeats" $ do
+      containsThreeRepeats "0123456789" `shouldBe` False
+
+    it "repeat at start" $ do
+      containsThreeRepeats "001234" `shouldBe` False
+
+    it "repeat at end" $ do
+      containsThreeRepeats "012344" `shouldBe` False
+
+    it "repeat in middle" $ do
+      containsThreeRepeats "012234" `shouldBe` False
+
+    it "3 at start" $ do
+      containsThreeRepeats "0001234" `shouldBe` True
+
+    it "3 at end" $ do
+      containsThreeRepeats "0123444" `shouldBe` True
+
+    it "3 in middle" $ do
+      containsThreeRepeats "0122234" `shouldBe` True

@@ -31,9 +31,23 @@ allDigitsAscending s =
       ]
 
 containsRepeated :: String -> Bool
+containsRepeated [] = False
 containsRepeated [_] = False
 containsRepeated s =
   or [
     (head s) == (s !! 1),
     containsRepeated $ tail s
+     ]
+
+containsThreeRepeats :: String -> Bool
+containsThreeRepeats [] = False
+containsThreeRepeats [_] = False
+containsThreeRepeats [_, _] = False
+containsThreeRepeats s =
+  or [
+    and [
+      (head s) == (s !! 1),
+      (head s) == (s !! 2)
+        ],
+    containsThreeRepeats $ tail s
      ]
