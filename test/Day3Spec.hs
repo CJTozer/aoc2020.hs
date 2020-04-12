@@ -76,3 +76,26 @@ test_day3 = hspec $ do
       let (t1, _) = parseWire "R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51"
       let (t2, _) = parseWire "U98,R91,D20,R16,D67,R40,U7,R15,U6,R7"
       closestIntersection t1 t2 `shouldBe` 135
+
+  describe "onLine" $ do
+    it "not horizontal or vertical" $ do
+      -- TODO sort of a bug really, but inputs will always be horizontal or vertical lines for now!
+      onLine (0, 0) (3, 3) (0, 0) `shouldBe` False
+
+    it "hit first point" $ do
+      onLine (0, 0) (3, 0) (0, 0) `shouldBe` True
+
+    it "hit second point" $ do
+      onLine (0, 0) (3, 0) (3, 0) `shouldBe` True
+
+    it "on vertical line" $ do
+      onLine (0, 0) (0, 3) (0, 2) `shouldBe` True
+
+    it "on horizontal line" $ do
+      onLine (0, 0) (3, 0) (2, 0) `shouldBe` True
+
+    it "beyond vertical line" $ do
+      onLine (0, 0) (0, 3) (0, 4) `shouldBe` False
+
+    it "beyond horizontal line" $ do
+      onLine (0, 0) (3, 0) (-1, 0) `shouldBe` False
