@@ -52,7 +52,7 @@ test_day3 = hspec $ do
     it "U2,R4,D30,L6" $ do
       let (ts, ps) = parseWire "U2,R4,D30,L6"
       ts `shouldBe` ([Hor 4 (-2) (-28), Hor 0 4 2], [Ver 4 2 (-28), Ver 0 0 2])
-      ps `shouldBe` [(0, 0), (0, 2), (4, 2), (4, (-28)), ((-2), (-28))]
+      ps `shouldBe` [(-2,-28),(4,-28),(4,2),(0,2),(0,0)]
 
   describe "allIntersections" $ do
     it "U2,R4,D30,L6 / R6,D3,L4,U6" $ do

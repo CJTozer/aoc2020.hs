@@ -19,15 +19,39 @@ day3 = do
   putStrLn "day2 end"
 
 -- Get the intersection with the shortest delay
-fastestIntersection :: WireTracks -> WireTracks -> Int
-fastestIntersection (h1, v1) (h2, v2) = do
+fastestIntersection :: WireData-> WireData -> Int
+fastestIntersection ((h1, v1), ps1) ((h2, v2), ps2) = do
   let intersections = (allIntersections h1 v2) ++ (allIntersections h2 v1)
 -- TODO
   let manhattan_ds = sort [(abs x) + (abs y) | (x, y) <- intersections]
   head (tail manhattan_ds)
 
--- distanceToIntersection
--- TODO
+distanceToIntersection :: Point -> [Point] -> Int
+distanceToIntersection t ps = do
+  -- p0 is the current point
+  -- p1 is the next point
+  -- t is the target point
+  let p0:p1:_ = ps
+  case onLine t p0 p1 of
+    -- If t is on the line between p0 and p1, we will hit our intersection
+    True -> distanceBetween p0 t
+    -- If not, move to p1 and continue searching from there
+    False -> (distanceBetween p0 p1) + distanceToIntersection t (tail ps)
+
+-- Given 2 points and a target point, work out if the line between the first two contains the target
+onLine :: Point -> Point -> Point -> Bool
+onLine p1 p2 t = do
+  let (p1_x, p1_y) = p1
+  let (p2_x, p2_y) = p2
+  let (t_x, t_y) = t
+  or [
+    and [and $ map (== t_x) [p1_x, p2_x], between t_y p1_y p2_y],
+    and [and $ map (== t_y) [p1_y, p2_y], between t_x p1_x p2_x]
+     ]
+
+-- Work out the Manhattan distance between two points
+distanceBetween :: Point -> Point -> Int
+distanceBetween p1 p2 = 0 -- TODO
 
 -- Get the intersection with the closest (Manhattan) distance to the origin
 closestIntersection :: WireTracks -> WireTracks -> Int
@@ -40,6 +64,7 @@ data Hor = Hor { x1::Int, x2::Int, yy::Int } deriving (Show, Eq)
 data Ver = Ver { xx::Int, y1::Int, y2::Int } deriving (Show, Eq)
 type Point = (Int, Int)
 type WireTracks = ([Hor], [Ver])
+type WireData = (WireTracks, [Point])
 type WireState = ([String], [Point], WireTracks)
 
 -- Inclusive between returns (v1 <= x <= v2) - or v1/2 the other way around
@@ -65,7 +90,7 @@ parseWire s = do
   let origin::Point = (0, 0)
   let instructions = splitOn "," s
   let (_, points, tracks) = collectInstructions (instructions, origin:[], ([], []))
-  (tracks, reverse points)
+  (tracks, points)
 
 -- Read off the next instruction, collecting the Hor/Ver into the lists
 collectInstructions :: WireState -> WireState
