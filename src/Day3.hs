@@ -2,15 +2,26 @@
 
 module Day3 where
 
+import Data.List
 import Data.List.Split
+import Data.Maybe
 
-day2 :: IO ()
-day2 = do
+day3 :: IO ()
+day3 = do
   putStrLn "day3 start"
   contents <- readFile "data/day3"
   let ls = lines contents
   let w1:w2:_ = ls
+  let closest = closestIntersection (parseWire w1) (parseWire w2)
+  print (show closest)
   putStrLn "day2 end"
+
+closestIntersection :: WireTracks -> WireTracks -> Int
+closestIntersection (h1, v1) (h2, v2) = do
+  let intersections = (allIntersections h1 v2) ++ (allIntersections h2 v1)
+  let manhattan_ds = sort [(abs x) + (abs y) | (x, y) <- intersections]
+  -- Ignore origin.  @@@ TODO but only when it's a Horiz/Vert start...
+  head (manhattan_ds)
 
 data Hor = Hor { x1::Int, x2::Int, yy::Int } deriving (Show, Eq)
 data Ver = Ver { xx::Int, y1::Int, y2::Int } deriving (Show, Eq)
@@ -23,6 +34,9 @@ between :: Int -> Int -> Int -> Bool
 between x v1 v2 =
   x >= min v1 v2 && x <= max v1 v2
 
+allIntersections :: [Hor] -> [Ver] -> [Point]
+allIntersections hs vs = catMaybes [intersection h v | h <- hs, v <- vs]
+
 -- Take a Hor and a Ver and return the intersection, if any
 intersection :: Hor -> Ver -> Maybe Point
 intersection h v = do
@@ -32,11 +46,13 @@ intersection h v = do
     True -> Just ((xx v), (yy h))
     False -> Nothing
 
+-- Parse a wire's tracks from the string describing it
 parseWire :: String -> WireTracks
 parseWire s = do
   let origin::Point = (0, 0)
   let instructions = splitOn "," s
-  ([], [])
+  let (_, _, tracks) = collectInstructions (instructions, origin, ([], []))
+  tracks
 
 -- Read off the next instruction, collecting the Hor/Ver into the lists
 collectInstructions :: WireState -> WireState
