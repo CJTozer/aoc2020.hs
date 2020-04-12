@@ -51,7 +51,10 @@ onLine p1 p2 t = do
 
 -- Work out the Manhattan distance between two points
 distanceBetween :: Point -> Point -> Int
-distanceBetween p1 p2 = 0 -- TODO
+distanceBetween p1 p2 = do
+  let (x1, y1) = p1
+  let (x2, y2) = p2
+  (abs (x1 - x2)) + (abs (y1 - y2))
 
 -- Get the intersection with the closest (Manhattan) distance to the origin
 closestIntersection :: WireTracks -> WireTracks -> Int

@@ -99,3 +99,16 @@ test_day3 = hspec $ do
 
     it "beyond horizontal line" $ do
       onLine (0, 0) (3, 0) (-1, 0) `shouldBe` False
+
+  describe "distanceBetween" $ do
+    it "same point" $ do
+      distanceBetween (1, 1) (1, 1) `shouldBe` 0
+
+    it "shared x" $ do
+      distanceBetween (4, 2) (4, 12) `shouldBe` 10
+
+    it "shared y" $ do
+      distanceBetween (-3, -14) (-32, -14) `shouldBe` 29
+
+    it "no shared coordinate" $ do
+      distanceBetween (4, 4) (-4, -4) `shouldBe` 16
