@@ -43,8 +43,7 @@ opMultiply = opMath (*)
 -- Generic maths
 opMath :: (Int -> Int -> Int) -> IPtr -> PState -> PState
 opMath op pos state = do
-  let flags = div (state !! pos) 100
-  let ptrs = getPointers flags 3 (pos + 1) state
+  let ptrs = getPointersFromOpPtr 3 pos state
   let ptr_a = ptrs !! 0
   let ptr_b = ptrs !! 1
   let ptr_out = ptrs !! 2
@@ -57,14 +56,16 @@ opMath op pos state = do
 -- Cheating for now by knowing the input should be 1
 opInput :: IPtr -> PState -> PState
 opInput pos state = do
-  let ptr_out = state !! (pos + 1)
+  let ptrs = getPointersFromOpPtr 1 pos state
+  let ptr_out = ptrs !! 0
   let value = trace ("+++ Setting input to 1 for ptr " ++ show ptr_out) 1 -- TODO get actual input!
   updateValue ptr_out value state
 
 -- Output operation
 opOutput :: IPtr -> PState -> PState
 opOutput pos state = do
-  let ptr_out = state !! (pos + 1)
+  let ptrs = getPointersFromOpPtr 1 pos state
+  let ptr_out = ptrs !! 0
   trace ("+++ Value at pointer " ++ (show ptr_out) ++ " is " ++ (show (state !! ptr_out))) state
 
 -- Get a new state with a single uipdated value
@@ -73,7 +74,13 @@ updateValue pos value state = do
   let (as, bs) = splitAt pos state
   as ++ [value] ++ tail bs
 
--- Get pointer values from an opcode and subsequent values
+-- Get parameter pointers from instruction pointer
+getPointersFromOpPtr :: Int -> IPtr -> PState -> [IPtr]
+getPointersFromOpPtr num pos state = do
+  let flags = div (state !! pos) 100
+  getPointers flags num (pos + 1) state
+
+-- Get pointer values from flags and position of first parameter
 getPointers :: Int -> Int -> IPtr -> PState -> [IPtr]
 getPointers _ 0 _ _ = []
 getPointers flags num pos state = do
