@@ -31,24 +31,59 @@ test_day4 = hspec $ do
     it "repeat in middle" $ do
       containsRepeated "012234" `shouldBe` True
 
-  describe "containsThreeRepeats" $ do
+  describe "containsExactlyTwoRepeats" $ do
     it "no repeats" $ do
-      containsThreeRepeats "0123456789" `shouldBe` False
+      containsExactlyTwoRepeats "0123456789" `shouldBe` False
 
     it "repeat at start" $ do
-      containsThreeRepeats "001234" `shouldBe` False
+      containsExactlyTwoRepeats "001234" `shouldBe` True
 
     it "repeat at end" $ do
-      containsThreeRepeats "012344" `shouldBe` False
+      containsExactlyTwoRepeats "012344" `shouldBe` True
 
     it "repeat in middle" $ do
-      containsThreeRepeats "012234" `shouldBe` False
+      containsExactlyTwoRepeats "012234" `shouldBe` True
 
     it "3 at start" $ do
-      containsThreeRepeats "0001234" `shouldBe` True
+      containsExactlyTwoRepeats "0001234" `shouldBe` False
 
     it "3 at end" $ do
-      containsThreeRepeats "0123444" `shouldBe` True
+      containsExactlyTwoRepeats "0123444" `shouldBe` False
 
     it "3 in middle" $ do
-      containsThreeRepeats "0122234" `shouldBe` True
+      containsExactlyTwoRepeats "0122234" `shouldBe` False
+
+    it "3 and 2 in middle" $ do
+      containsExactlyTwoRepeats "0222334" `shouldBe` True
+
+  describe "numRepeats" $ do
+    it "empty string" $ do
+      numRepeats '1' "" `shouldBe` 0
+
+    it "no repeats" $ do
+      numRepeats '1' "2" `shouldBe` 0
+
+    it "one repeat ends string" $ do
+      numRepeats '1' "1" `shouldBe` 1
+
+    it "one repeat" $ do
+      numRepeats '1' "123" `shouldBe` 1
+
+    it "two repeats" $ do
+      numRepeats '1' "113" `shouldBe` 2
+
+    it "four repeats" $ do
+      numRepeats '1' "11113" `shouldBe` 4
+
+    it "one repeat, more later which should be ignored" $ do
+      numRepeats '1' "141113" `shouldBe` 1
+
+  describe "isValid" $ do
+    it "Website examples" $ do
+      isValid "111111" `shouldBe` False
+      isValid "223450" `shouldBe` False
+      isValid "123789" `shouldBe` False
+      isValid "112233" `shouldBe` True
+      isValid "123444" `shouldBe` False
+      isValid "111122" `shouldBe` True
+      isValid "112222" `shouldBe` True
