@@ -17,3 +17,16 @@ test_day4 = hspec $ do
 
     it "descending" $ do
       allDigitsAscending "0123546789" `shouldBe` False
+
+  describe "containsRepeated" $ do
+    it "no repeats" $ do
+      containsRepeated "0123456789" `shouldBe` False
+
+    it "repeat at start" $ do
+      containsRepeated "001234" `shouldBe` True
+
+    it "repeat at end" $ do
+      containsRepeated "012344" `shouldBe` True
+
+    it "repeat in middle" $ do
+      containsRepeated "012234" `shouldBe` True
