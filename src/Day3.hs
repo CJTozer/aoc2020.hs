@@ -5,6 +5,7 @@ module Day3 where
 import Data.List
 import Data.List.Split
 import Data.Maybe
+import Debug.Trace
 
 day3 :: IO ()
 day3 = do
@@ -22,17 +23,19 @@ day3 = do
 fastestIntersection :: WireData-> WireData -> Int
 fastestIntersection ((h1, v1), ps1) ((h2, v2), ps2) = do
   let intersections = (allIntersections h1 v2) ++ (allIntersections h2 v1)
--- TODO
-  let manhattan_ds = sort [(abs x) + (abs y) | (x, y) <- intersections]
-  head (tail manhattan_ds)
+  let ds = sort [(distanceToIntersection p ps1) + (distanceToIntersection p ps2) | p <- intersections]
+  head (tail ds)
 
 distanceToIntersection :: Point -> [Point] -> Int
+-- distanceToIntersection t ps | trace ("distanceToIntersection " ++ (show t) ++ " " ++ (show ps)) False = undefined
+distanceToIntersection _ [] = 1000000
+distanceToIntersection _ [p] = 100000
 distanceToIntersection t ps = do
   -- p0 is the current point
   -- p1 is the next point
   -- t is the target point
   let p0:p1:_ = ps
-  case onLine t p0 p1 of
+  case onLine p0 p1 t of
     -- If t is on the line between p0 and p1, we will hit our intersection
     True -> distanceBetween p0 t
     -- If not, move to p1 and continue searching from there
@@ -93,7 +96,7 @@ parseWire s = do
   let origin::Point = (0, 0)
   let instructions = splitOn "," s
   let (_, points, tracks) = collectInstructions (instructions, origin:[], ([], []))
-  (tracks, points)
+  (tracks, reverse points)
 
 -- Read off the next instruction, collecting the Hor/Ver into the lists
 collectInstructions :: WireState -> WireState

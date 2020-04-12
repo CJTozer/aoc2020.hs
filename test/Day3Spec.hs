@@ -52,7 +52,7 @@ test_day3 = hspec $ do
     it "U2,R4,D30,L6" $ do
       let (ts, ps) = parseWire "U2,R4,D30,L6"
       ts `shouldBe` ([Hor 4 (-2) (-28), Hor 0 4 2], [Ver 4 2 (-28), Ver 0 0 2])
-      ps `shouldBe` [(-2,-28),(4,-28),(4,2),(0,2),(0,0)]
+      ps `shouldBe` [(0,0),(0,2),(4,2),(4,-28),(-2,-28)]
 
   describe "allIntersections" $ do
     it "U2,R4,D30,L6 / R6,D3,L4,U6" $ do
@@ -112,3 +112,23 @@ test_day3 = hspec $ do
 
     it "no shared coordinate" $ do
       distanceBetween (4, 4) (-4, -4) `shouldBe` 16
+
+  describe "distanceToIntersection" $ do
+    it "(0,0) [(0,0),(6,0),(6,-3),(2,-3),(2,3)]" $ do
+      distanceToIntersection (0,0) [(0,0),(6,0),(6,-3),(2,-3),(2,3)] `shouldBe` 0
+
+  describe "fastestIntersection" $ do
+    it "U2,R4,D30,L6 / R6,D3,L4,U6" $ do
+      let w1 = parseWire "U2,R4,D30,L6"
+      let w2 = parseWire "R6,D3,L4,U6"
+      fastestIntersection w1 w2 `shouldBe` 12
+
+    it "Day 3 Example 1" $ do
+      let w1 = parseWire "R75,D30,R83,U83,L12,D49,R71,U7,L72"
+      let w2 = parseWire "U62,R66,U55,R34,D71,R55,D58,R83"
+      fastestIntersection w1 w2 `shouldBe` 610
+
+    it "Day 3 Example 2" $ do
+      let w1 = parseWire "R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51"
+      let w2 = parseWire "U98,R91,D20,R16,D67,R40,U7,R15,U6,R7"
+      fastestIntersection w1 w2 `shouldBe` 410
