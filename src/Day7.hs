@@ -1,6 +1,10 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module Day7 (day7, runIntCodeWithInputs) where
+module Day7 (
+  day7,
+  runIntCodeWithInputs,
+  chainAmps
+  ) where
 
 import Data.List.Split
 import Debug.Trace
@@ -16,6 +20,21 @@ day7 = do
 type IPtr = Int -- Instruction Pointer
 type PState = ([Int], IOValues) -- Program state
 type IOValues = ([Int], [Int]) -- Program inputs & outputs
+
+chainAmps :: String -> [Int] -> Int -> Int
+chainAmps program [x] amp_input = ampOutput program [x, amp_input]
+chainAmps program phases amp_input = do
+  let phase:rem_ps = phases
+  let output = ampOutput program [phase, amp_input]
+  chainAmps program rem_ps output
+
+ampOutput :: String -> [Int] -> Int
+ampOutput program inputs = do
+  let state = runIntCodeWithInputs program inputs
+  let (_, (_, outs)) = state
+  case outs of
+    [x] -> trace ("Ouput from amp with inputs " ++ (show inputs) ++ " is " ++ (show x)) x
+    _ -> trace ("Unexpected output " ++ (show outs) ++ " from amp with inputs " ++ (show inputs)) 0
 
 runIntCodeWithInputs :: String -> [Int] -> PState
 runIntCodeWithInputs s inputs = do
