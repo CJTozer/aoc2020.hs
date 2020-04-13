@@ -1,0 +1,73 @@
+#!/usr/bin/env python3
+import sys
+
+def main():
+  if len(sys.argv) < 2:
+    print("No argument specified")
+    sys.exit(1)
+
+  new_day = int(sys.argv[1])
+
+  # Main.hs
+  with open("app/Main.hs", 'w') as main_hs:
+    main_hs.write("""module Main where
+
+import System.Environment
+""")
+    for d in range(1, new_day + 1):
+      main_hs.write("import Day{}\n".format(d))
+
+    main_hs.write("""
+main :: IO ()
+main = getArgs >>= runTest
+
+runTest :: [String] -> IO ()
+""")
+    for d in range(1, new_day + 1):
+      main_hs.write("runTest [\"{}\"] = day{}\n".format(d, d))
+    main_hs.write("runTest _ = putStrLn \"Please provide the scenario to run\"\n")
+
+  # src/DayX.hs
+  with open("src/Day{}.hs".format(new_day), 'w') as day_x:
+    day_x.write("{-# LANGUAGE ScopedTypeVariables #-}\n")
+    day_x.write("""
+module Day{n} where
+
+import Data.List.Split
+import Debug.Trace
+
+day{n} :: IO ()
+day{n} = do
+  putStrLn "day{n} start"
+  contents <- readFile "data/day{n}"
+  putStrLn "day{n} end"
+""".format(n=new_day))
+
+  # test/Spec.hs
+  with open("test/Spec.hs", 'w') as spec:
+    for d in range(1, new_day + 1):
+      spec.write("import Day{}Spec\n".format(d))
+    spec.write("""
+main :: IO ()
+main = do
+""")
+    for d in range(1, new_day + 1):
+      spec.write("  test_day{}\n".format(d))
+
+  # test/DayXSpec.hs
+  with open("test/Day{}Spec.hs".format(new_day), 'w') as test_x:
+    test_x.write("""module Day{n}Spec where
+
+import Test.Hspec
+import Day{n}
+
+test_day{n} :: IO ()
+test_day{n} = hspec $ do
+  describe "placeholder" $ do
+    it "1 == 1" $ do
+      1 `shouldBe` 1
+""".format(n=new_day))
+
+
+if __name__ == "__main__":
+  main()
