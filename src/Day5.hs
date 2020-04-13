@@ -36,7 +36,7 @@ runIntCodeFrom pos ints = do
     6 -> do
       let new_pos = opJumpIfFalse pos ints
       runIntCodeFrom new_pos ints
--- Opcode 7 is less than: if the first parameter is less than the second parameter, it stores 1 in the position given by the third parameter. Otherwise, it stores 0.
+    7 -> runIntCodeFrom (pos + 4) $ opLessThan pos ints
 -- Opcode 8 is equals: if the first parameter is equal to the second parameter, it stores 1 in the position given by the third parameter. Otherwise, it stores 0.
     99 -> ints
 
@@ -95,6 +95,21 @@ opJumpIfFalse pos state = do
   case state !! ptr_check of
     0 -> state !! ptr_new_pos
     _ -> pos + 3
+
+-- Opcode 7 is less than: if the first parameter is less than the second parameter, it stores 1 in the position given by the third parameter. Otherwise, it stores 0.
+opLessThan :: IPtr -> PState -> PState
+opLessThan pos state = do
+  let ptrs = getPointersFromOpPtr 3 pos state
+  let ptr_a = ptrs !! 0
+  let ptr_b = ptrs !! 1
+  let ptr_out = ptrs !! 2
+
+  -- Get the values to compare
+  let a = state !! ptr_a
+  let b = state !! ptr_b
+  case a < b of
+    True -> updateValue ptr_out 1 state
+    False -> updateValue ptr_out 0 state
 
 -- Get a new state with a single uipdated value
 updateValue :: IPtr -> Int -> PState -> PState
