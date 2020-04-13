@@ -31,7 +31,7 @@ runTest :: [String] -> IO ()
   with open("src/Day{}.hs".format(new_day), 'w') as day_x:
     day_x.write("{-# LANGUAGE ScopedTypeVariables #-}\n")
     day_x.write("""
-module Day{n} where
+module Day{n} (day{n}) where
 
 import Data.List.Split
 import Debug.Trace
