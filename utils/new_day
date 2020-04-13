@@ -68,6 +68,9 @@ test_day{n} = hspec $ do
       1 `shouldBe` 1
 """.format(n=new_day))
 
+  # data/dayx
+  with open("data/day{}".format(new_day), 'w') as data:
+    data.write("")
 
 if __name__ == "__main__":
   main()
