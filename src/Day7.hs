@@ -4,7 +4,8 @@ module Day7 (
   day7,
   runIntCodeWithInputs,
   chainAmps,
-  bestAmplification
+  bestAmplification,
+  bestFeedback
   ) where
 
 import Data.List
@@ -15,13 +16,48 @@ day7 :: IO ()
 day7 = do
   putStrLn "day7 start"
   contents <- readFile "data/day7"
-  let best = bestAmplification contents
+  let best = bestFeedback contents
   print (show best)
   putStrLn "day7 end"
 
 type IPtr = Int -- Instruction Pointer
 type PState = ([Int], IOValues) -- Program state
+type FullPState = (Bool, IPtr, PState) -- Full program state
 type IOValues = ([Int], [Int]) -- Program inputs & outputs
+
+bestFeedback :: String -> Int
+bestFeedback program = do
+  last $ sort $ [ feedbackAmpsForPhases program phases | phases <- permutations [5,6,7,8,9] ]
+
+feedbackAmpsForPhases :: String -> [Int] -> Int
+feedbackAmpsForPhases program phases = do
+  let ints = map read $ splitOn "," program
+
+  let amps :: [FullPState] = map (\p -> (False, 0, (ints, ([p], [])))) phases
+  let outputs = feedbackAmps amps [0] -- Initial extra input is zero
+  -- trace ("For sequence " ++ (show phases) ++ " got output " ++ (show outputs)) head outputs
+  head outputs
+
+feedbackAmps :: [FullPState] -> [Int] -> [Int]
+feedbackAmps amps next_inputs = do
+  let amp:rem_amps = amps
+  -- let (complete, _, _) = trace ("Running amp: " ++ (show amp) ++ " with extra inputs " ++ (show next_inputs)) amp
+  let (complete, _, _) = amp
+  case complete of
+    -- Next amp is in completed state, we must be done here
+    True -> next_inputs
+    -- Run this amp and continue
+    False -> do
+      let updated_amp = runIntCodeFrom $ updateInputs amp next_inputs
+      let (comp, pos, (ints, (inputs, new_output))) = updated_amp
+      -- New list has this amp at the end, with outputs cleared
+      let new_amps = rem_amps ++ [(comp, pos, (ints, (inputs, [])))]
+      feedbackAmps new_amps new_output
+
+updateInputs :: FullPState -> [Int] -> FullPState
+updateInputs state extra_inputs = do
+  let (comp, pos, (ints, (inputs, outputs))) = state
+  (comp, pos, (ints, (inputs ++ extra_inputs, outputs)))
 
 bestAmplification :: String -> Int
 bestAmplification program = do
@@ -37,34 +73,40 @@ chainAmps program phases amp_input = do
 ampOutput :: String -> [Int] -> Int
 ampOutput program inputs = do
   let state = runIntCodeWithInputs program inputs
-  let (_, (_, outs)) = state
+  let (_, _, (_, (_, outs))) = state
   case outs of
     [x] -> x
     _ -> trace ("Unexpected output " ++ (show outs) ++ " from amp with inputs " ++ (show inputs)) 0
 
-runIntCodeWithInputs :: String -> [Int] -> PState
+runIntCodeWithInputs :: String -> [Int] -> FullPState
 runIntCodeWithInputs s inputs = do
   let ints = map read $ splitOn "," s
-  runIntCodeFrom 0 (ints, (inputs, []))
+  runIntCodeFrom (False, 0, (ints, (inputs, [])))
 
-runIntCodeFrom :: IPtr -> PState -> PState
-runIntCodeFrom pos state = do
-  let (ints, _) = state
+runIntCodeFrom :: FullPState -> FullPState
+runIntCodeFrom full_state = do
+  let (_, pos, state) = full_state
+  let (ints, (inputs, _)) = state
   let opcode = ints !! pos
   case rem opcode 100 of
-    1 -> runIntCodeFrom (pos + 4) $ opAdd pos state
-    2 -> runIntCodeFrom (pos + 4) $ opMultiply pos state
-    3 -> runIntCodeFrom (pos + 2) $ opInput pos state
-    4 -> runIntCodeFrom (pos + 2) $ opOutput pos state
+    1 -> runIntCodeFrom (False, (pos + 4), opAdd pos state)
+    2 -> runIntCodeFrom (False, (pos + 4), opMultiply pos state)
+    3 -> case inputs of
+      -- No more inputs, we have to wait
+      [] -> full_state
+      -- Input availble, continue
+      _ -> runIntCodeFrom (False, (pos + 2), opInput pos state)
+    4 -> runIntCodeFrom (False, (pos + 2), opOutput pos state)
     5 -> do
       let new_pos = opJumpIfTrue pos state
-      runIntCodeFrom new_pos state
+      runIntCodeFrom (False, new_pos, state)
     6 -> do
       let new_pos = opJumpIfFalse pos state
-      runIntCodeFrom new_pos state
-    7 -> runIntCodeFrom (pos + 4) $ opLessThan pos state
-    8 -> runIntCodeFrom (pos + 4) $ opEquals pos state
-    99 -> state
+      runIntCodeFrom (False, new_pos, state)
+    7 -> runIntCodeFrom (False, (pos + 4), opLessThan pos state)
+    8 -> runIntCodeFrom (False, (pos + 4), opEquals pos state)
+    -- Termination
+    99 -> (True, pos, state)
     _ -> trace ("!!! Unexpected op code " ++ (show opcode) ++ " at pointer " ++ (show pos)) undefined
 
 -- Addition operation
@@ -89,7 +131,6 @@ opMath op pos state = do
   (updateValue ptr_out (op a b) ints, ios)
 
 -- Input operation
--- Cheating for now by knowing the input should be 1
 opInput :: IPtr -> PState -> PState
 opInput pos state = do
   let (ints, (ins, outs)) = state
