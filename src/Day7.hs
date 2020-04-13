@@ -3,9 +3,11 @@
 module Day7 (
   day7,
   runIntCodeWithInputs,
-  chainAmps
+  chainAmps,
+  bestAmplification
   ) where
 
+import Data.List
 import Data.List.Split
 import Debug.Trace
 
@@ -13,13 +15,17 @@ day7 :: IO ()
 day7 = do
   putStrLn "day7 start"
   contents <- readFile "data/day7"
-  let final_state = runIntCodeWithInputs contents []
-  print (show final_state)
+  let best = bestAmplification contents
+  print (show best)
   putStrLn "day7 end"
 
 type IPtr = Int -- Instruction Pointer
 type PState = ([Int], IOValues) -- Program state
 type IOValues = ([Int], [Int]) -- Program inputs & outputs
+
+bestAmplification :: String -> Int
+bestAmplification program = do
+  last $ sort $ [ chainAmps program phases 0 | phases <- permutations [0,1,2,3,4] ]
 
 chainAmps :: String -> [Int] -> Int -> Int
 chainAmps program [x] amp_input = ampOutput program [x, amp_input]
@@ -33,7 +39,7 @@ ampOutput program inputs = do
   let state = runIntCodeWithInputs program inputs
   let (_, (_, outs)) = state
   case outs of
-    [x] -> trace ("Ouput from amp with inputs " ++ (show inputs) ++ " is " ++ (show x)) x
+    [x] -> x
     _ -> trace ("Unexpected output " ++ (show outs) ++ " from amp with inputs " ++ (show inputs)) 0
 
 runIntCodeWithInputs :: String -> [Int] -> PState
@@ -90,7 +96,8 @@ opInput pos state = do
   let ptrs = getPointersFromOpPtr 1 pos ints
   let ptr_out = ptrs !! 0
   let value:rem_ins = ins
-  let new_ios = trace ("+++ Using input " ++ (show value) ++ " remaining inputs: " ++ (show rem_ins)) (rem_ins, outs)
+  -- let new_ios = trace ("+++ Using input " ++ (show value) ++ " remaining inputs: " ++ (show rem_ins)) (rem_ins, outs)
+  let new_ios = (rem_ins, outs)
   (updateValue ptr_out value ints, new_ios)
 
 -- Output operation
@@ -100,7 +107,8 @@ opOutput pos state = do
   let ptrs = getPointersFromOpPtr 1 pos ints
   let ptr_out = ptrs !! 0
   let new_outs = outs ++ [(ints !! ptr_out)]
-  trace ("+++ Outputs now: " ++ (show new_outs)) (ints, (ins, new_outs))
+  -- trace ("+++ Outputs now: " ++ (show new_outs)) (ints, (ins, new_outs))
+  (ints, (ins, new_outs))
 
 -- Opcode 5 is jump-if-true: if the first parameter is non-zero, it sets the instruction pointer to the value from the second parameter. Otherwise, it does nothing.
 opJumpIfTrue :: IPtr -> PState -> IPtr
