@@ -60,6 +60,18 @@ test_day5 = hspec $ do
     it "Test LessThan - a < b, indirect" $ do
       runIntCode "7,0,4,5,99,8" `shouldBe` [7,0,4,5,99,1]
 
+    it "Test Equals - a < b" $ do
+      runIntCode "1108,0,1,5,99,8" `shouldBe` [1108,0,1,5,99,0]
+
+    it "Test Equals - a = b" $ do
+      runIntCode "1108,1,1,5,99,8" `shouldBe` [1108,1,1,5,99,1]
+
+    it "Test Equals - a > b" $ do
+      runIntCode "1108,2,1,5,99,8" `shouldBe` [1108,2,1,5,99,0]
+
+    it "Test Equals - a = b, indirect" $ do
+      runIntCode "8,0,5,5,99,8" `shouldBe` [8,0,5,5,99,1]
+
   describe "getPointers" $ do
     it "All indirect" $ do
       getPointers 0 2 0 [1,2] `shouldBe` [1,2]

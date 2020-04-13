@@ -37,8 +37,9 @@ runIntCodeFrom pos ints = do
       let new_pos = opJumpIfFalse pos ints
       runIntCodeFrom new_pos ints
     7 -> runIntCodeFrom (pos + 4) $ opLessThan pos ints
--- Opcode 8 is equals: if the first parameter is equal to the second parameter, it stores 1 in the position given by the third parameter. Otherwise, it stores 0.
+    8 -> runIntCodeFrom (pos + 4) $ opEquals pos ints
     99 -> ints
+    _ -> trace ("!!! Unexpected op code " ++ (show opcode) ++ " at pointer " ++ (show pos)) undefined
 
 -- Addition operation
 opAdd :: IPtr -> PState -> PState
@@ -108,6 +109,21 @@ opLessThan pos state = do
   let a = state !! ptr_a
   let b = state !! ptr_b
   case a < b of
+    True -> updateValue ptr_out 1 state
+    False -> updateValue ptr_out 0 state
+
+-- Opcode 8 is equals: if the first parameter is equal to the second parameter, it stores 1 in the position given by the third parameter. Otherwise, it stores 0.
+opEquals :: IPtr -> PState -> PState
+opEquals pos state = do
+  let ptrs = getPointersFromOpPtr 3 pos state
+  let ptr_a = ptrs !! 0
+  let ptr_b = ptrs !! 1
+  let ptr_out = ptrs !! 2
+
+  -- Get the values to compare
+  let a = state !! ptr_a
+  let b = state !! ptr_b
+  case a == b of
     True -> updateValue ptr_out 1 state
     False -> updateValue ptr_out 0 state
 
