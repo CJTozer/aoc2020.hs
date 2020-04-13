@@ -30,6 +30,14 @@ runIntCodeFrom pos ints = do
     2 -> runIntCodeFrom (pos + 4) $ opMultiply pos ints
     3 -> runIntCodeFrom (pos + 2) $ opInput pos ints
     4 -> runIntCodeFrom (pos + 2) $ opOutput pos ints
+    5 -> do
+      let new_pos = opJumpIfTrue pos ints
+      runIntCodeFrom new_pos ints
+    6 -> do
+      let new_pos = opJumpIfFalse pos ints
+      runIntCodeFrom new_pos ints
+-- Opcode 7 is less than: if the first parameter is less than the second parameter, it stores 1 in the position given by the third parameter. Otherwise, it stores 0.
+-- Opcode 8 is equals: if the first parameter is equal to the second parameter, it stores 1 in the position given by the third parameter. Otherwise, it stores 0.
     99 -> ints
 
 -- Addition operation
@@ -58,7 +66,7 @@ opInput :: IPtr -> PState -> PState
 opInput pos state = do
   let ptrs = getPointersFromOpPtr 1 pos state
   let ptr_out = ptrs !! 0
-  let value = trace ("+++ Setting input to 1 for ptr " ++ show ptr_out) 1 -- TODO get actual input!
+  let value = trace ("+++ Setting input to 5 for ptr " ++ show ptr_out) 5 -- TODO get actual input?
   updateValue ptr_out value state
 
 -- Output operation
@@ -67,6 +75,26 @@ opOutput pos state = do
   let ptrs = getPointersFromOpPtr 1 pos state
   let ptr_out = ptrs !! 0
   trace ("+++ Value at pointer " ++ (show ptr_out) ++ " is " ++ (show (state !! ptr_out))) state
+
+-- Opcode 5 is jump-if-true: if the first parameter is non-zero, it sets the instruction pointer to the value from the second parameter. Otherwise, it does nothing.
+opJumpIfTrue :: IPtr -> PState -> IPtr
+opJumpIfTrue pos state = do
+  let ptrs = getPointersFromOpPtr 2 pos state
+  let ptr_check = ptrs !! 0
+  let ptr_new_pos = ptrs !! 1
+  case state !! ptr_check of
+    0 -> pos + 3
+    _ -> state !! ptr_new_pos
+
+-- Opcode 6 is jump-if-false: if the first parameter is zero, it sets the instruction pointer to the value from the second parameter. Otherwise, it does nothing.
+opJumpIfFalse :: IPtr -> PState -> IPtr
+opJumpIfFalse pos state = do
+  let ptrs = getPointersFromOpPtr 2 pos state
+  let ptr_check = ptrs !! 0
+  let ptr_new_pos = ptrs !! 1
+  case state !! ptr_check of
+    0 -> state !! ptr_new_pos
+    _ -> pos + 3
 
 -- Get a new state with a single uipdated value
 updateValue :: IPtr -> Int -> PState -> PState

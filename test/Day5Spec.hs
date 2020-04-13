@@ -19,7 +19,7 @@ test_day5 = hspec $ do
       runIntCode "1,1,1,4,99,5,6,0,99" `shouldBe` [30,1,1,4,2,5,6,0,99]
 
     it "Test input: 3,3,99,0" $ do
-      runIntCode "3,3,99,1" `shouldBe` [3,3,99,1]
+      runIntCode "3,3,99,0" `shouldBe` [3,3,99,5]
 
     it "Test output: 1,0,0,0,4,0,99" $ do
       runIntCode "1,0,0,0,4,0,99" `shouldBe` [2,0,0,0,4,0,99]
@@ -29,6 +29,24 @@ test_day5 = hspec $ do
 
     it "Test direct params - website example 2" $ do
       runIntCode "1101,100,-1,4,0" `shouldBe` [1101,100,-1,4,99]
+
+    it "Test JumpIfTrue - direct params" $ do
+      runIntCode "1105,1,1,0,6,99,0" `shouldBe` [1105,1,1,0,6,99,1106]
+
+    it "Test JumpIfTrue - indirect params" $ do
+      runIntCode "5,2,6,0,6,99,1" `shouldBe` [5,2,6,0,6,99,5]
+
+    it "Test JumpIfTrue - no jump" $ do
+      runIntCode "1105,0,1,99" `shouldBe` [1105,0,1,99]
+
+    it "Test JumpIfFalse - direct params" $ do
+      runIntCode "1106,0,2,1,6,7,99,0" `shouldBe` [1106,0,2,1,6,7,99,0]
+
+    it "Test JumpIfFalse - indirect params" $ do
+      runIntCode "6,6,4,99,1,6,0,9,99,0" `shouldBe` [6,6,4,99,1,6,0,9,99,6]
+
+    it "Test JumpIfFalse - no jump" $ do
+      runIntCode "1006,0,1,99" `shouldBe` [1006,0,1,99]
 
   describe "getPointers" $ do
     it "All indirect" $ do
