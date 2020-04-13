@@ -114,3 +114,25 @@ test_day6 = hspec $ do
 
     it "Website example, non-match" $ do
       findParentForId "Z" (constructMap "COM)B\nB)C\nC)D\nD)E\nE)F\nB)G\nG)H\nD)I\nE)J\nJ)K\nK)L") `shouldBe` Nothing
+
+  describe "calculateManeuvers" $ do
+    it "Both start on COM" $ do
+      calculateManevuers (constructMap "COM)YOU\nCOM)SAN") `shouldBe` 0
+
+    it "Both start on COM, there are other nodes too" $ do
+      calculateManevuers (constructMap "COM)YOU\nCOM)333\nCOM)SAN") `shouldBe` 0
+
+    it "YOU on COM, SAN deeper " $ do
+      calculateManevuers (constructMap "COM)YOU\nCOM)333\n333)332\n332)331\n331)SAN") `shouldBe` 3
+
+    it "SAN on COM, YOU deeper " $ do
+      calculateManevuers (constructMap "COM)SAN\nCOM)333\n333)332\n332)331\n331)YOU") `shouldBe` 3
+
+    it "Deeper, both same depth" $ do
+      calculateManevuers (constructMap "COM)B\nB)C\nC)D\nD)E\nE)F\nB)G\nG)H\nD)I\nE)J\nJ)K\nK)L\nE)YOU\nI)SAN") `shouldBe` 2
+
+    it "YOU deeper" $ do
+      calculateManevuers (constructMap "COM)B\nB)C\nC)D\nD)E\nE)F\nB)G\nG)H\nD)I\nE)J\nJ)K\nK)L\nK)YOU\nI)SAN") `shouldBe` 4
+
+    it "SAN deeper" $ do
+      calculateManevuers (constructMap "COM)B\nB)C\nC)D\nD)E\nE)F\nB)G\nG)H\nD)I\nE)J\nJ)K\nK)L\nH)YOU\nF)SAN") `shouldBe` 6
