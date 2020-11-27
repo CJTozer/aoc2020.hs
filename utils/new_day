@@ -52,7 +52,6 @@ day{n} = do
 main :: IO ()
 main = do
 """)
-    spec.write("  test_intcode\n")
     for d in range(1, new_day + 1):
       spec.write("  test_day{}\n".format(d))
 
