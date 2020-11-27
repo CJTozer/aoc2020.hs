@@ -45,7 +45,6 @@ day{n} = do
 
   # test/Spec.hs
   with open("test/Spec.hs", 'w') as spec:
-    spec.write("import IntCodeSpec\n".format(d))
     for d in range(1, new_day + 1):
       spec.write("import Day{}Spec\n".format(d))
     spec.write("""

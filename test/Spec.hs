@@ -1,4 +1,3 @@
-import IntCodeSpec
 import Day1Spec
 
 main :: IO ()
