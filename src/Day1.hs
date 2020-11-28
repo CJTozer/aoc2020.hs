@@ -1,10 +1,14 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Day1 (
-  day1,
-  instructionsToBasement
+  day1
+, sumTo2020
+, findSum2
+, findSum3
   ) where
 
+import qualified Data.Set as Set
+import Data.List
 import Data.List.Split
 import Debug.Trace
 
@@ -12,16 +16,35 @@ day1 :: IO ()
 day1 = do
   putStrLn "day1 start"
   contents <- readFile "data/day1"
-  print $ show $ numTimesFound '(' contents
-  print $ show $ numTimesFound ')' contents
-  print $ show $ instructionsToBasement 0 contents
-  putStrLn "day1 end"
+  let ls = lines contents
+  let ns :: [Int] = map read ls
+  print $ show $ findSum3 ns
+  putStrLn "day2 end"
 
-numTimesFound :: Eq a => a -> [a] -> Int
-numTimesFound _ [] = 0
-numTimesFound x xs = (length . filter (== x)) xs
+sumTo2020 :: Int -> Int -> Bool
+sumTo2020 x y = (x + y) == 2020
 
-instructionsToBasement :: Int -> String -> Int
-instructionsToBasement (-1) _ = 0
-instructionsToBasement f ('(':xs) = 1 + instructionsToBasement (f + 1) xs
-instructionsToBasement f (')':xs) = 1 + instructionsToBasement (f - 1) xs
+findSum2 :: [Int] -> Int
+findSum2 ns = do
+  let s = Set.fromList ns
+  findSum2_set s ns 2020
+
+findSum2_set :: Set.Set Int -> [Int] -> Int -> Int
+findSum2_set _ [] _ = 0
+findSum2_set s (n:ns) x =
+  if Set.member (x - n) s
+  then n * (x - n)
+  else findSum2_set s ns x
+
+findSum3 :: [Int] -> Int
+findSum3 ns = do
+  let s = Set.fromList ns
+  findSum3_set s ns 2020
+
+findSum3_set :: Set.Set Int -> [Int] -> Int -> Int
+findSum3_set _ [] _ = 0
+findSum3_set s (n:ns) x = do
+  let y = findSum2_set s ns (x - n)
+  if y == 0
+  then findSum3_set s ns x
+  else n * y
