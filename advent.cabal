@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 87ea8ebce2f7c0ea432db1c7c2d3a0c6308932375e2236b19f21332062c88d3c
+-- hash: ca3727820ba4d9481fa42e0821582da2f1946214686d34229f9e4aab59a108fb
 
 name:           advent
 version:        0.1.0.0
@@ -33,6 +33,7 @@ library
       Day4
       Day5
       Day6
+      Day7
   other-modules:
       Paths_advent
   hs-source-dirs:
@@ -41,6 +42,7 @@ library
       base >=4.7 && <5
     , containers
     , regex-tdfa
+    , set-extra
     , split
   default-language: Haskell2010
 
@@ -56,6 +58,7 @@ executable advent-exe
     , base >=4.7 && <5
     , containers
     , regex-tdfa
+    , set-extra
   default-language: Haskell2010
 
 test-suite advent-test
@@ -68,6 +71,7 @@ test-suite advent-test
       Day4Spec
       Day5Spec
       Day6Spec
+      Day7Spec
       Paths_advent
   hs-source-dirs:
       test
@@ -78,4 +82,5 @@ test-suite advent-test
     , containers
     , hspec
     , regex-tdfa
+    , set-extra
   default-language: Haskell2010
