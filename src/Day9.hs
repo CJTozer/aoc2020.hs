@@ -11,7 +11,11 @@ day9 = do
   contents <- readFile "data/day9"
   let ints = parse contents
   putStrLn . show $ take 5 ints
-  putStrLn . show $ findFirstInvalid ints
+  let inv = findFirstInvalid ints
+  putStrLn . show $ inv
+  let range = findRangeSummingTo inv ints
+  putStrLn . show $ range
+  putStrLn . show $ (foldr1 min range) + (foldr1 max range)
   putStrLn "day9 end"
 
 parse :: String -> [Int]
@@ -51,3 +55,18 @@ findFirstInvalid ints = do
     findFirstInvalid $ tail ints
   else
     fst res
+
+takeSummingToAtLeast :: Int -> [Int] -> [Int]
+takeSummingToAtLeast n (x:xs) =
+  if x < n
+  then
+    [x] ++ takeSummingToAtLeast (n - x) xs
+  else
+    [x]
+
+findRangeSummingTo :: Int -> [Int] -> [Int]
+findRangeSummingTo n ints = do
+  let r = takeSummingToAtLeast n ints
+  if (sum r == n)
+  then r
+  else findRangeSummingTo n $ tail ints
