@@ -61,4 +61,5 @@ totalRoutes'' [] = 1
 totalRoutes'' [_] = 1
 totalRoutes'' [_, _] = 2
 totalRoutes'' (1:2:xs) = (totalRoutes'' xs) + (totalRoutes'' (2:xs))
+totalRoutes'' (2:1:xs) = (totalRoutes'' xs) + (totalRoutes'' (1:xs))
 totalRoutes'' (1:1:1:xs) = (totalRoutes'' xs) + (totalRoutes'' (1:xs)) + (totalRoutes'' (1:1:xs))
