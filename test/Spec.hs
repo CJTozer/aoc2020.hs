@@ -8,6 +8,7 @@ import Day7Spec
 import Day8Spec
 import Day9Spec
 import Day10Spec
+import Day11Spec
 
 main :: IO ()
 main = do
@@ -21,3 +22,4 @@ main = do
   test_day8
   test_day9
   test_day10
+  test_day11
