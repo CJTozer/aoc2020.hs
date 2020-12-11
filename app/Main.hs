@@ -13,7 +13,7 @@ import Day9
 import Day10
 import Day11
 import Day12
-import Day12b
+import Day13
 
 main :: IO ()
 main = getArgs >>= runTest
@@ -31,5 +31,5 @@ runTest ["9"] = day9
 runTest ["10"] = day10
 runTest ["11"] = day11
 runTest ["12"] = day12
-runTest ["12b"] = day12b
+runTest ["13"] = day13
 runTest _ = putStrLn "Please provide the scenario to run"
