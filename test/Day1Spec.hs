@@ -1,10 +1,10 @@
-module Day1Spec where
+module Day1Spec (spec) where
 
-import Test.Hspec
-import Day1
+import Test.Hspec ( describe, it, shouldBe, Spec )
+import Day1 ( findSum2, findSum3, sumTo2020 )
 
-test_day1 :: IO ()
-test_day1 = hspec $ do
+spec :: Spec
+spec = do
   describe "sumTo2020" $ do
     it "10 2010" $ do
       sumTo2020 10 2010 `shouldBe` True

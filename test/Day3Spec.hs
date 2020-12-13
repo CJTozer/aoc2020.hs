@@ -1,10 +1,10 @@
-module Day3Spec where
+module Day3Spec (spec) where
 
-import Test.Hspec
-import Day3
+import Test.Hspec ( describe, it, shouldBe, Spec )
+import Day3 ( treesWithSlope, treesWithSlope' )
 
-test_day3 :: IO ()
-test_day3 = hspec $ do
+spec :: Spec
+spec = do
   describe "treesWithSlope'" $ do
     it "Full grid" $ do
       treesWithSlope' [".#", "##", "##", "##"] 2 `shouldBe` 1

@@ -1,10 +1,10 @@
-module Day5Spec where
+module Day5Spec (spec) where
 
-import Test.Hspec
-import Day5
+import Test.Hspec ( describe, it, shouldBe, Spec )
+import Day5 ( seatToId )
 
-test_day5 :: IO ()
-test_day5 = hspec $ do
+spec :: Spec
+spec = do
   describe "seatToId" $ do
     it "FBFBBFFRLR" $ do
       seatToId "FBFBBFFRLR" `shouldBe` 357

@@ -5,12 +5,9 @@ module Day1 (
 , sumTo2020
 , findSum2
 , findSum3
-  ) where
+) where
 
 import qualified Data.Set as Set
-import Data.List
-import Data.List.Split
-import Debug.Trace
 
 day1 :: IO ()
 day1 = do
@@ -18,7 +15,7 @@ day1 = do
   contents <- readFile "data/day1"
   let ls = lines contents
   let ns :: [Int] = map read ls
-  print $ show $ findSum3 ns
+  print $ findSum3 ns
   putStrLn "day2 end"
 
 sumTo2020 :: Int -> Int -> Bool

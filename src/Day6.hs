@@ -2,9 +2,8 @@
 
 module Day6 (day6) where
 
-import Data.List.Split
+import Data.List.Split ( splitOn )
 import qualified Data.Set as Set
-import Debug.Trace
 
 day6 :: IO ()
 day6 = do
@@ -16,23 +15,23 @@ day6 = do
   print $ show $ sumGroupCounts' entries
   putStrLn "day6 end"
 
-setFromLine :: String -> Set.Set(Char)
-setFromLine l = Set.fromList l
+setFromLine :: String -> Set.Set Char
+setFromLine = Set.fromList
 
-setFromGroup :: String -> Set.Set(Char)
+setFromGroup :: String -> Set.Set Char
 setFromGroup g = Set.unions $ map setFromLine $ lines g
 
 sumGroupCounts :: [String] -> Int
-sumGroupCounts gs = sum $ map Set.size $ map setFromGroup gs
+sumGroupCounts gs = sum $ map (Set.size . setFromGroup) gs
 
-setFromGroup' :: String -> Set.Set(Char)
+setFromGroup' :: String -> Set.Set Char
 setFromGroup' g = do
-  let lineSets :: [Set.Set(Char)] = map setFromLine $ lines g
+  let lineSets :: [Set.Set Char] = map setFromLine $ lines g
   intersectAllSets lineSets
 
-intersectAllSets :: Ord a => [Set.Set(a)] -> Set.Set(a)
+intersectAllSets :: Ord a => [Set.Set a] -> Set.Set a
 intersectAllSets [x] = x
 intersectAllSets (x:xs) = Set.intersection x $ intersectAllSets xs
 
 sumGroupCounts' :: [String] -> Int
-sumGroupCounts' gs = sum $ map Set.size $ map setFromGroup' gs
+sumGroupCounts' gs = sum $ map (Set.size . setFromGroup') gs

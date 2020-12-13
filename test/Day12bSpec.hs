@@ -1,10 +1,10 @@
-module Day12bSpec where
+module Day12bSpec (spec) where
 
-import Test.Hspec
-import Day12b
+import Test.Hspec ( describe, it, shouldBe, Spec )
+import Day12b ( runInstructions )
 
-test_day12b :: IO ()
-test_day12b = hspec $ do
+spec :: Spec
+spec = do
   describe "runInstructions" $ do
     it "Example" $ do
       runInstructions (0, 0) (10, 1) ["F10"] `shouldBe` ((100, 10), (10, 1))

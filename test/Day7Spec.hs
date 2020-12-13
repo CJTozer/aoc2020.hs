@@ -1,11 +1,17 @@
-module Day7Spec where
+module Day7Spec (spec) where
 
-import Test.Hspec
+import Test.Hspec ( describe, it, shouldBe, Spec )
 import Day7
+    ( allPossibleParents,
+      bagsRequired,
+      lineToRule,
+      mayContain,
+      parseRules,
+      Rule(Rule) )
 import qualified Data.Set as Set
 
-test_day7 :: IO ()
-test_day7 = hspec $ do
+spec :: Spec
+spec = do
   describe "lineToRule" $ do
     it "First two lines of input" $ do
       lineToRule "pale turquoise bags contain 3 muted cyan bags, 5 striped teal bags." `shouldBe`

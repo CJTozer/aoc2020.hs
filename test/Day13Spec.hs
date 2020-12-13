@@ -1,10 +1,14 @@
-module Day13Spec where
+module Day13Spec  where
 
-import Test.Hspec
+import Test.Hspec ( describe, it, shouldBe, Spec )
 import Day13
+    ( earliestBusAfter,
+      parseTimetableForPart2,
+      part2Inner,
+      validPart2 )
 
-test_day13 :: IO ()
-test_day13 = hspec $ do
+spec :: Spec
+spec = do
   describe "earliestBusAfter" $ do
     it "Simple Tests" $ do
       earliestBusAfter 100 1 `shouldBe` 100

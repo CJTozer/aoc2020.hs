@@ -2,10 +2,8 @@
 
 module Day8 (day8) where
 
-import Data.List.Split
-import Text.Regex.TDFA
+import Text.Regex.TDFA ( (=~) )
 import qualified Data.Set as Set
-import Debug.Trace
 
 data Instruction = Nop Int | Jmp Int | Acc Int deriving (Show)
 
@@ -39,13 +37,13 @@ programTick (ptr, acc) ins =
   case ins !! ptr of
     Acc x -> (ptr + 1, acc + x)
     Jmp x -> (ptr + x, acc)
-    Nop x -> (ptr + 1, acc)
+    Nop _ -> (ptr + 1, acc)
 
 runUntilLoop :: (Int, Int) -> [Instruction] -> (Int, Int)
 runUntilLoop state ins = runUntilDuplicate state ins Set.empty
 
 -- Returns ptr > last instruction if terminates
-runUntilDuplicate :: (Int, Int) -> [Instruction] -> Set.Set(Int) -> (Int, Int)
+runUntilDuplicate :: (Int, Int) -> [Instruction] -> Set.Set Int  -> (Int, Int)
 runUntilDuplicate (ptr, acc) ins hits =
   if Set.member ptr hits || ptr >= length ins
   then
@@ -60,14 +58,13 @@ doesItTerminate state ins = do
   (ptr >= length ins, acc)
 
 runWithNthSwapped :: Int -> [Instruction] -> (Bool, Int)
-runWithNthSwapped n ins = do
-  doesItTerminate (0, 0) (swapNth n ins)
+runWithNthSwapped n ins = doesItTerminate (0, 0) (swapNth n ins)
 
 swapNth :: Int -> [Instruction] -> [Instruction]
 swapNth n ins = do
   let h = take n ins
   let (x:t) = drop n ins
-  h ++ (swapInstruction x):t
+  h ++ swapInstruction x : t
 
 -- Swap Jmp for Nop and vice-versa, leave anything else unchanged
 swapInstruction :: Instruction -> Instruction
@@ -79,4 +76,4 @@ swapInstruction x =
 
 findSwapThatTerminates :: [Instruction] -> (Bool, Int)
 findSwapThatTerminates ins =
-  head $ filter (\(y, _) -> y) $ map (\x -> runWithNthSwapped x ins) [0..(length ins - 1)]
+  head $ filter fst $ map (`runWithNthSwapped` ins) [0..(length ins - 1)]

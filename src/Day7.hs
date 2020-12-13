@@ -10,12 +10,11 @@ module Day7 (
 , bagsRequired
 ) where
 
-import Data.List
-import Data.List.Split
-import Text.Regex.TDFA
+import Data.List ( isInfixOf )
+import Data.List.Split ( splitOn )
+import Text.Regex.TDFA ( (=~) )
 import qualified Data.Set as Set
-import Data.Set.Extra (flatten)
-import Debug.Trace
+import Data.Set.Extra ( flatten )
 
 data Rule = Rule { outer::String, inner::[(String, Int)] } deriving (Show, Eq)
 
@@ -34,12 +33,12 @@ parseRules s = map lineToRule $ lines s
 
 lineToRule :: String -> Rule
 lineToRule s = do
-  let (before, match, after, submatches) = (s =~ "(.*) bags? contain (.*)") :: (String, String, String, [String])
-  Rule (submatches !! 0) $ parseContents (submatches !! 1)
+  let (_, _, _, submatches) = (s =~ "(.*) bags? contain (.*)") :: (String, String, String, [String])
+  Rule (head submatches) $ parseContents (submatches !! 1)
 
 parseContents :: String -> [(String, Int)]
-parseContents s = do
-  if (isInfixOf "no other bags" s)
+parseContents s =
+  if "no other bags" `isInfixOf` s
   then []
   else do
     let parts = splitOn "," s
@@ -47,22 +46,22 @@ parseContents s = do
 
 parseContent :: String -> (String, Int)
 parseContent s = do
-  let (before, match, after, submatches) = (s =~ " ?([0-9]+) (.*) bags?\\.?") :: (String, String, String, [String])
-  (submatches !! 1, read $ submatches !! 0)
+  let (_, _, _, submatches) = (s =~ " ?([0-9]+) (.*) bags?\\.?") :: (String, String, String, [String])
+  (submatches !! 1, read $ head submatches)
 
 mayContain :: Rule -> String -> Bool
 mayContain r s =
-  (length $ filter (\(x, y) -> x == s) (inner r)) > 0
+  any (\ (x, _) -> x == s) (inner r)
 
-allPossibleDirectParents :: String -> [Rule] -> Set.Set(String)
-allPossibleDirectParents s rs = Set.fromList $ map outer $ filter (\r -> mayContain r s) rs
+allPossibleDirectParents :: String -> [Rule] -> Set.Set String
+allPossibleDirectParents s rs = Set.fromList $ map outer $ filter (`mayContain` s) rs
 
-allPossibleParents :: String -> [Rule] -> Set.Set(String)
+allPossibleParents :: String -> [Rule] -> Set.Set String
 allPossibleParents s rs = do
   let ps = allPossibleDirectParents s rs
-  Set.union ps $ flatten $ Set.map (\p -> allPossibleParents p rs) ps
+  Set.union ps $ flatten $ Set.map (`allPossibleParents` rs) ps
 
 bagsRequired :: String -> [Rule] -> Int
 bagsRequired s rs = do
-  let r = (filter (\r -> outer r == s ) rs) !! 0
-  (sum $ map (\(child, num) -> num * (bagsRequired child rs)) (inner r)) + 1
+  let r = head (filter (\ r -> outer r == s) rs)
+  sum (map (\ (child, num) -> num * bagsRequired child rs) (inner r)) + 1

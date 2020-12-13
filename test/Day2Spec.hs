@@ -1,10 +1,10 @@
-module Day2Spec where
+module Day2Spec (spec) where
 
-import Test.Hspec
-import Day2
+import Test.Hspec ( describe, it, shouldBe, Spec )
+import Day2 ( isValidLine, isValidLine2, safeCheckChar )
 
-test_day2 :: IO ()
-test_day2 = hspec $ do
+spec :: Spec
+spec = do
   describe "isValidLine" $ do
     it "Trivially valid" $ do
       isValidLine "0-2 a: a" `shouldBe` True

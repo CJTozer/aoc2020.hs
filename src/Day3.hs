@@ -1,14 +1,10 @@
 {-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE ParallelListComp #-}
 
 module Day3 (
   day3
 , treesWithSlope
 , treesWithSlope'
   ) where
-
-import Data.List.Split
-import Debug.Trace
 
 day3 :: IO ()
 day3 = do
@@ -25,7 +21,7 @@ day3 = do
 treesWithSlope :: [String] -> Int -> Int
 treesWithSlope [] _ = 0
 treesWithSlope ls slope = length $ filter (== '#') s
-  where s = [ row !! ((row_n * slope) `mod` (length row))
+  where s = [ row !! ((row_n * slope) `mod` length row)
             | (row_n, row) <- zip [0..] ls
             ]
 
@@ -33,7 +29,7 @@ treesWithSlope ls slope = length $ filter (== '#') s
 treesWithSlope' :: [String] -> Int -> Int
 treesWithSlope' [] _ = 0
 treesWithSlope' ls slope = length $ filter (== '#') s
-  where s = [ row !! ((row_n `div` slope) `mod` (length row))
+  where s = [ row !! ((row_n `div` slope) `mod` length row)
             | (row_n, row) <- zip [0..] ls
             , row_n `mod` slope == 0
             ]

@@ -1,10 +1,9 @@
-module Day9Spec where
+module Day9Spec (spec) where
 
-import Test.Hspec
-import Day9
+import Test.Hspec ( describe, it, shouldBe, Spec )
 
-test_day9 :: IO ()
-test_day9 = hspec $ do
+spec :: Spec
+spec = do
   describe "placeholder" $ do
     it "1 == 1" $ do
       1 `shouldBe` 1

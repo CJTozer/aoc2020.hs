@@ -5,8 +5,7 @@ module Day12b (
 , runInstructions
 ) where
 
-import Data.List.Split
-import Debug.Trace
+import Debug.Trace ( trace )
 
 type Pos = (Int, Int)
 type Dir = (Int, Int)
@@ -16,7 +15,7 @@ day12b = do
   putStrLn "day12b start"
   contents <- readFile "data/day12"
   let final = runInstructions (0, 0) (10, 1) (lines contents)
-  putStrLn . show $ final
+  print final
   putStrLn "day12b end"
 
 newFacing :: Dir -> String -> Dir

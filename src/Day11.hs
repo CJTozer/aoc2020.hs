@@ -2,8 +2,7 @@
 
 module Day11 (day11) where
 
-import Data.List.Split
-import Debug.Trace
+import Debug.Trace ( trace )
 
 type Pos = (Int, Int)
 
@@ -12,13 +11,13 @@ day11 = do
   putStrLn "day11 start"
   contents <- readFile "data/day11"
   let initial_state = lines contents
-  putStrLn . show $ initial_state
-  putStrLn . show $ newFullState initial_state
-  putStrLn . show $ findSteadyState initial_state
+  print initial_state
+  print $ newFullState initial_state
+  print $ findSteadyState initial_state
   putStrLn "day11 end"
 
 numOccupied :: [String] -> Int
-numOccupied s = sum . (map length) . map (filter (=='#')) $ s
+numOccupied = sum . map (length . filter (=='#')) 
 
 findSteadyState :: [String] -> [String]
 findSteadyState s =
@@ -29,15 +28,15 @@ findSteadyState s =
 
 newFullState :: [String] -> [String]
 newFullState s =
-  map (\n -> newRowState n s) [0..(length s - 1)]
+  map (`newRowState` s) [0..(length s - 1)]
 
 newRowState :: Int -> [String] -> String
 newRowState row_n s =
-  map (\p -> newState p s) ps
+  map (`newState` s) ps
   where ps = [(row_n, y) | y <- [0..(length (head s) - 1)]]
 
 newState :: Pos -> [String] -> Char
-newState p@(x, y) s =
+newState p s =
   case this_seat of
     '.' -> '.'
     '#' -> if occupied_neighbours >= 5
@@ -59,20 +58,20 @@ seatAtPos (x, y) s =
 
 countOccupiedNeighbours :: Pos -> [String] -> Int
 countOccupiedNeighbours p s =
-  sum . (map isOccupied) $ getNeighbours' p s
+  sum . map isOccupied $ getNeighbours' p s
 
 -- 0 for unoccupied, 1 for occupied
 isOccupied :: Char -> Int
-isOccupied c = if (c == '#') then 1 else 0
+isOccupied c = if c == '#' then 1 else 0
 
-getNeighbours :: Pos -> [String] -> [Char]
+getNeighbours :: Pos -> [String] -> String
 getNeighbours (x, y) s =
   [seatAtPos (x', y') s |
    x' <- [x-1, x, x+1],
    y' <- [y-1, y, y+1],
    (x' /= x) || (y' /= y)]
 
-getNeighbours' :: Pos -> [String] -> [Char]
+getNeighbours' :: Pos -> [String] -> String
 getNeighbours' p s =
   [getNeighbourOnVector p (vx, vy) s |
    vx <- [-1, 0, 1],

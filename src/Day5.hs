@@ -5,18 +5,16 @@ module Day5 (
 , seatToId
   ) where
 
-import Data.List.Split
 import Data.Char (digitToInt)
-import Data.List (foldl', sort)
+import Data.List (foldl')
 import qualified Data.Set as Set
-import Debug.Trace
 
 day5 :: IO ()
 day5 = do
   putStrLn "day5 start"
   contents <- readFile "data/day5"
-  print $ show $ head $ reverse $ sort $ map seatToId $ lines contents
-  print $ show $ findMissing $ map seatToId $ lines contents
+  print $ maximum $ map seatToId $ lines contents
+  print $ findMissing $ map seatToId $ lines contents
   putStrLn "day5 end"
 
 seatToId :: String -> Int
@@ -31,7 +29,7 @@ toDec :: String -> Int
 toDec = foldl' (\acc x -> acc * 2 + digitToInt x) 0
 
 replace :: Eq a => a -> a -> [a] -> [a]
-replace x x' s = map (\c -> if c==x then x'; else c) s
+replace x x' = map (\c -> if c==x then x'; else c)
 
 findMissing :: [Int] -> [Int]
 findMissing ids = do
