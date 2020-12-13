@@ -1,22 +1,22 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Day7 (
-  day7
-, Rule (Rule)
-, parseRules
-, lineToRule
-, mayContain
-, allPossibleParents
-, bagsRequired
+  day7,
+  Rule (Rule),
+  parseRules,
+  lineToRule,
+  mayContain,
+  allPossibleParents,
+  bagsRequired,
 ) where
 
-import Data.List ( isInfixOf )
-import Data.List.Split ( splitOn )
-import Text.Regex.TDFA ( (=~) )
+import Data.List (isInfixOf)
+import Data.List.Split (splitOn)
 import qualified Data.Set as Set
-import Data.Set.Extra ( flatten )
+import Data.Set.Extra (flatten)
+import Text.Regex.TDFA ((=~))
 
-data Rule = Rule { outer::String, inner::[(String, Int)] } deriving (Show, Eq)
+data Rule = Rule {outer :: String, inner :: [(String, Int)]} deriving (Show, Eq)
 
 day7 :: IO ()
 day7 = do
@@ -39,10 +39,10 @@ lineToRule s = do
 parseContents :: String -> [(String, Int)]
 parseContents s =
   if "no other bags" `isInfixOf` s
-  then []
-  else do
-    let parts = splitOn "," s
-    map parseContent parts
+    then []
+    else do
+      let parts = splitOn "," s
+      map parseContent parts
 
 parseContent :: String -> (String, Int)
 parseContent s = do
@@ -51,7 +51,7 @@ parseContent s = do
 
 mayContain :: Rule -> String -> Bool
 mayContain r s =
-  any (\ (x, _) -> x == s) (inner r)
+  any (\(x, _) -> x == s) (inner r)
 
 allPossibleDirectParents :: String -> [Rule] -> Set.Set String
 allPossibleDirectParents s rs = Set.fromList $ map outer $ filter (`mayContain` s) rs
@@ -63,5 +63,5 @@ allPossibleParents s rs = do
 
 bagsRequired :: String -> [Rule] -> Int
 bagsRequired s rs = do
-  let r = head (filter (\ r -> outer r == s) rs)
-  sum (map (\ (child, num) -> num * bagsRequired child rs) (inner r)) + 1
+  let r = head (filter (\r -> outer r == s) rs)
+  sum (map (\(child, num) -> num * bagsRequired child rs) (inner r)) + 1

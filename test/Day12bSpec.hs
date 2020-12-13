@@ -1,7 +1,7 @@
 module Day12bSpec (spec) where
 
-import Test.Hspec ( describe, it, shouldBe, Spec )
-import Day12b ( runInstructions )
+import Day12b (runInstructions)
+import Test.Hspec (Spec, describe, it, shouldBe)
 
 spec :: Spec
 spec = do

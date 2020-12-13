@@ -1,10 +1,10 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Day3 (
-  day3
-, treesWithSlope
-, treesWithSlope'
-  ) where
+  day3,
+  treesWithSlope,
+  treesWithSlope',
+) where
 
 day3 :: IO ()
 day3 = do
@@ -21,15 +21,19 @@ day3 = do
 treesWithSlope :: [String] -> Int -> Int
 treesWithSlope [] _ = 0
 treesWithSlope ls slope = length $ filter (== '#') s
-  where s = [ row !! ((row_n * slope) `mod` length row)
-            | (row_n, row) <- zip [0..] ls
-            ]
+ where
+  s =
+    [ row !! ((row_n * slope) `mod` length row)
+    | (row_n, row) <- zip [0 ..] ls
+    ]
 
 -- For slopes < 1
 treesWithSlope' :: [String] -> Int -> Int
 treesWithSlope' [] _ = 0
 treesWithSlope' ls slope = length $ filter (== '#') s
-  where s = [ row !! ((row_n `div` slope) `mod` length row)
-            | (row_n, row) <- zip [0..] ls
-            , row_n `mod` slope == 0
-            ]
+ where
+  s =
+    [ row !! ((row_n `div` slope) `mod` length row)
+    | (row_n, row) <- zip [0 ..] ls
+    , row_n `mod` slope == 0
+    ]

@@ -1,11 +1,11 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Day12 (
-  day12
-, runInstructions
+  day12,
+  runInstructions,
 ) where
 
-import Debug.Trace ( trace )
+import Debug.Trace (trace)
 
 type Pos = (Int, Int)
 type Dir = (Int, Int)
@@ -21,15 +21,15 @@ day12 = do
 newFacing :: Dir -> String -> Dir
 newFacing d@(x, y) s =
   case trace s s of
-    "R90" -> (y, -x)
-    "R180" -> (-x, -y)
-    "R270" -> (-y, x)
+    "R90" -> (y, - x)
+    "R180" -> (- x, - y)
+    "R270" -> (- y, x)
     "L90" -> newFacing d "R270"
     "L180" -> newFacing d "R180"
     "L270" -> newFacing d "R90"
 
 newState :: Pos -> Dir -> String -> (Pos, Dir)
-newState (x, y) d@(xdot, ydot) s@(command:val) =
+newState (x, y) d@(xdot, ydot) s@(command : val) =
   case command of
     'E' -> ((x + intval, y), d)
     'W' -> ((x - intval, y), d)
@@ -37,10 +37,12 @@ newState (x, y) d@(xdot, ydot) s@(command:val) =
     'S' -> ((x, y - intval), d)
     'F' -> ((x + xdot * intval, y + ydot * intval), d)
     _ -> ((x, y), newFacing d s)
-  where intval = read val :: Int
+ where
+  intval = read val :: Int
 
 runInstructions :: Pos -> Dir -> [String] -> (Pos, Dir)
 runInstructions p d [] = (p, d)
-runInstructions p d (c:cs) =
+runInstructions p d (c : cs) =
   runInstructions p' d' cs
-  where (p', d') = newState p d c
+ where
+  (p', d') = newState p d c

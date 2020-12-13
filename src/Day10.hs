@@ -2,8 +2,8 @@
 
 module Day10 (day10) where
 
-import Data.List
-import Data.List.Split
+import Data.List (sort)
+import Data.List.Split (splitWhen)
 
 day10 :: IO ()
 day10 = do
@@ -22,34 +22,33 @@ day10 = do
   print $ totalRoutes diffs
   putStrLn "day10 end"
 
-
 joltageDiffs :: [Int] -> [Int]
 joltageDiffs [] = []
 joltageDiffs [_] = []
-joltageDiffs (x:y:zs) = (y - x) : joltageDiffs (y:zs)
+joltageDiffs (x : y : zs) = (y - x) : joltageDiffs (y : zs)
 
-countNs n x = length $ filter (==n) x
+countNs :: Eq a => a -> [a] -> Int
+countNs n x = length $ filter (== n) x
+countOnes :: [Int] -> Int
 countOnes = countNs 1
+countThrees :: [Int] -> Int
 countThrees = countNs 3
 
 routesTo :: Int -> [Int] -> Int
 routesTo 0 _ = 1
 routesTo x _ | x < 0 = 0
 routesTo x ints =
+  -- Sum of the 3 possible routes here
   if x `elem` ints
-  then
-    -- Sum of the 3 possible routes here
-    routesTo (x - 1) ints +
-    routesTo (x - 2) ints +
-    routesTo (x - 3) ints
-  else 0
+    then sum . map (`routesTo` ints) $ [x - 1, x - 2, x - 3]
+    else 0
 
 totalRoutes :: [Int] -> Int
 totalRoutes [] = 1
 totalRoutes [_] = 1
 totalRoutes ints =
   -- Gap of 3 is a total reset, just multiply those together
-  product $ map totalRoutes' (splitWhen (==3) ints)
+  product $ map totalRoutes' (splitWhen (== 3) ints)
 
 -- Now using the diffs not the raw values
 totalRoutes' :: [Int] -> Int
@@ -59,6 +58,6 @@ totalRoutes'' :: [Int] -> Int
 totalRoutes'' [] = 1
 totalRoutes'' [_] = 1
 totalRoutes'' [_, _] = 2
-totalRoutes'' (1:2:xs) = totalRoutes'' xs + totalRoutes'' (2:xs)
-totalRoutes'' (2:1:xs) = totalRoutes'' xs + totalRoutes'' (1:xs)
-totalRoutes'' (1:1:1:xs) = totalRoutes'' xs + totalRoutes'' (1:xs) + totalRoutes'' (1:1:xs)
+totalRoutes'' (1 : 2 : xs) = totalRoutes'' xs + totalRoutes'' (2 : xs)
+totalRoutes'' (2 : 1 : xs) = totalRoutes'' xs + totalRoutes'' (1 : xs)
+totalRoutes'' (1 : 1 : 1 : xs) = totalRoutes'' xs + totalRoutes'' (1 : xs) + totalRoutes'' (1 : 1 : xs)

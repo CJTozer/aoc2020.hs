@@ -1,18 +1,18 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Day13 (
-  day13
-, earliestBusAfter
-, validPart2
-, part2Inner
-, parseTimetableForPart2
+  day13,
+  earliestBusAfter,
+  validPart2,
+  part2Inner,
+  parseTimetableForPart2,
 ) where
 
-import Data.List
-import Data.List.Split
 import Data.Bifunctor (first)
 import Data.Function (on)
-import Debug.Trace
+import Data.List (sortBy)
+import Data.List.Split (splitOn)
+import Debug.Trace (trace)
 
 day13 :: IO ()
 day13 = do
@@ -44,23 +44,23 @@ earliestOption time timetable = do
 
 validPart2 :: Int -> [(Int, Int)] -> Bool
 validPart2 _ [] = True
-validPart2 time ((bus, offset):os) =
-  (time + offset) `mod` bus == 0 &&
-  validPart2 time os
+validPart2 time ((bus, offset) : os) =
+  (time + offset) `mod` bus == 0
+    && validPart2 time os
 
 parseTimetableForPart2 :: [String] -> [(Int, Int)]
 parseTimetableForPart2 entries =
-  map (first read) $ filter (\x -> fst x /= "x") $ zip entries [0..]
+  map (first read) $ filter (\x -> fst x /= "x") $ zip entries [0 ..]
 
 part2 :: [(Int, Int)] -> Int
 part2 = part2Inner 0 1
 
 part2Inner :: Int -> Int -> [(Int, Int)] -> Int
 part2Inner start _ [] = start
-part2Inner start inc (c:cs) = do
+part2Inner start inc (c : cs) = do
   -- All inputs are prime, so for each constraint satisfied, we know that the pattern
   -- repeats at (old interval * new bus ID) periods.
   -- Solve for next constraint only
-  let start' = head $ filter (\x -> validPart2 x [c]) (map (\y -> start + inc * y) [0..])
+  let start' = head $ filter (\x -> validPart2 x [c]) (map (\y -> start + inc * y) [0 ..])
   let inc' = inc * fst c
   part2Inner start' inc' cs

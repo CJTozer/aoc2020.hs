@@ -2,7 +2,7 @@
 
 module Day6 (day6) where
 
-import Data.List.Split ( splitOn )
+import Data.List.Split (splitOn)
 import qualified Data.Set as Set
 
 day6 :: IO ()
@@ -31,7 +31,7 @@ setFromGroup' g = do
 
 intersectAllSets :: Ord a => [Set.Set a] -> Set.Set a
 intersectAllSets [x] = x
-intersectAllSets (x:xs) = Set.intersection x $ intersectAllSets xs
+intersectAllSets (x : xs) = Set.intersection x $ intersectAllSets xs
 
 sumGroupCounts' :: [String] -> Int
 sumGroupCounts' gs = sum $ map (Set.size . setFromGroup') gs

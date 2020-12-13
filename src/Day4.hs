@@ -1,13 +1,13 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Day4 (
-  day4
-, validByr
+  day4,
+  validByr,
 ) where
 
-import Data.List ( isInfixOf )
-import Data.List.Split ( splitOn )
-import Text.Regex.TDFA ( (=~) )
+import Data.List (isInfixOf)
+import Data.List.Split (splitOn)
+import Text.Regex.TDFA ((=~))
 
 day4 :: IO ()
 day4 = do
@@ -23,23 +23,11 @@ validEntry :: String -> Bool
 validEntry s =
   -- Need: byr, iyr, eyr, hgt, hcl, ecl, pid
   -- Optional: cid
-  isInfixOf "byr:" s &&
-  isInfixOf "iyr:" s &&
-  isInfixOf "eyr:" s &&
-  isInfixOf "hgt:" s &&
-  isInfixOf "hcl:" s &&
-  isInfixOf "ecl:" s &&
-  isInfixOf "pid:" s
+  all (`isInfixOf` s) ["byr:", "iyr:", "eyr:", "hgt:", "hcl:", "ecl:", "pid:"]
 
 validEntry' :: String -> Bool
 validEntry' s =
-  validByr s &&
-  validIyr s &&
-  validEyr s &&
-  validHgt s &&
-  validHcl s &&
-  validEcl s &&
-  validPid s
+  all (\f -> f s) [validByr, validIyr, validEyr, validHgt, validHcl, validEcl, validPid]
 
 validByr :: String -> Bool
 validByr s = do
@@ -74,8 +62,8 @@ validHgt s = do
   length submatches > 1 && do
     let h :: Int = read $ head submatches
     let unit = submatches !! 1
-    (unit == "cm" && h >= 150 && h <= 193) ||
-      (unit == "in" && h >= 59 && h <= 76)
+    (unit == "cm" && h >= 150 && h <= 193)
+      || (unit == "in" && h >= 59 && h <= 76)
 
 validHcl :: String -> Bool
 validHcl s = do

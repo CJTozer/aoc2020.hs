@@ -1,11 +1,6 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module Day1 (
-  day1
-, sumTo2020
-, findSum2
-, findSum3
-) where
+module Day1 (day1, sumTo2020, findSum2, findSum3) where
 
 import qualified Data.Set as Set
 
@@ -28,10 +23,10 @@ findSum2 ns = do
 
 findSum2_set :: Set.Set Int -> [Int] -> Int -> Int
 findSum2_set _ [] _ = 0
-findSum2_set s (n:ns) x =
+findSum2_set s (n : ns) x =
   if Set.member (x - n) s
-  then n * (x - n)
-  else findSum2_set s ns x
+    then n * (x - n)
+    else findSum2_set s ns x
 
 findSum3 :: [Int] -> Int
 findSum3 ns = do
@@ -40,8 +35,8 @@ findSum3 ns = do
 
 findSum3_set :: Set.Set Int -> [Int] -> Int -> Int
 findSum3_set _ [] _ = 0
-findSum3_set s (n:ns) x = do
+findSum3_set s (n : ns) x = do
   let y = findSum2_set s ns (x - n)
   if y == 0
-  then findSum3_set s ns x
-  else n * y
+    then findSum3_set s ns x
+    else n * y

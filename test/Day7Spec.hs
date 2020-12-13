@@ -1,26 +1,27 @@
 module Day7Spec (spec) where
 
-import Test.Hspec ( describe, it, shouldBe, Spec )
-import Day7
-    ( allPossibleParents,
-      bagsRequired,
-      lineToRule,
-      mayContain,
-      parseRules,
-      Rule(Rule) )
 import qualified Data.Set as Set
+import Day7 (
+  Rule (Rule),
+  allPossibleParents,
+  bagsRequired,
+  lineToRule,
+  mayContain,
+  parseRules,
+ )
+import Test.Hspec (Spec, describe, it, shouldBe)
 
 spec :: Spec
 spec = do
   describe "lineToRule" $ do
     it "First two lines of input" $ do
-      lineToRule "pale turquoise bags contain 3 muted cyan bags, 5 striped teal bags." `shouldBe`
-        Rule "pale turquoise" [("muted cyan", 3), ("striped teal", 5)]
-      lineToRule "light tan bags contain 5 posh tomato bags." `shouldBe`
-        Rule "light tan" [("posh tomato", 5)]
+      lineToRule "pale turquoise bags contain 3 muted cyan bags, 5 striped teal bags."
+        `shouldBe` Rule "pale turquoise" [("muted cyan", 3), ("striped teal", 5)]
+      lineToRule "light tan bags contain 5 posh tomato bags."
+        `shouldBe` Rule "light tan" [("posh tomato", 5)]
     it "Bug #1?" $ do
-      lineToRule "bright blue bags contain 1 pale beige bag, 1 light teal bag." `shouldBe`
-        Rule "bright blue" [("pale beige", 1), ("light teal", 1)]
+      lineToRule "bright blue bags contain 1 pale beige bag, 1 light teal bag."
+        `shouldBe` Rule "bright blue" [("pale beige", 1), ("light teal", 1)]
 
   describe "mayContain" $ do
     it "First line of input" $ do
@@ -55,5 +56,3 @@ spec = do
       bagsRequired "C" rules `shouldBe` 12
       bagsRequired "B" rules `shouldBe` 30
       bagsRequired "A" rules `shouldBe` 91
-
-

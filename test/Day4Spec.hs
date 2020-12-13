@@ -1,7 +1,7 @@
 module Day4Spec (spec) where
 
-import Test.Hspec ( describe, it, shouldBe, Spec )
-import Day4 ( validByr )
+import Day4 (validByr)
+import Test.Hspec (Spec, describe, it, shouldBe)
 
 spec :: Spec
 spec = do

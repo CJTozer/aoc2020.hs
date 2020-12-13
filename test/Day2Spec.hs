@@ -1,7 +1,7 @@
 module Day2Spec (spec) where
 
-import Test.Hspec ( describe, it, shouldBe, Spec )
-import Day2 ( isValidLine, isValidLine2, safeCheckChar )
+import Day2 (isValidLine, isValidLine2, safeCheckChar)
+import Test.Hspec (Spec, describe, it, shouldBe)
 
 spec :: Spec
 spec = do

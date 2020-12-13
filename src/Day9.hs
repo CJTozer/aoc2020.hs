@@ -21,7 +21,7 @@ parse s = map read $ lines s
 pairSums :: [Int] -> [Int]
 pairSums [] = []
 pairSums [_] = []
-pairSums (x:xs) = pairSums' x xs ++ pairSums xs
+pairSums (x : xs) = pairSums' x xs ++ pairSums xs
 
 pairSums' :: Int -> [Int] -> [Int]
 pairSums' n = map (n +)
@@ -44,13 +44,11 @@ findFirstInvalid :: [Int] -> Int
 findFirstInvalid ints = do
   let res = nthNumValid 25 ints
   if snd res
-  then
-    findFirstInvalid $ tail ints
-  else
-    fst res
+    then findFirstInvalid $ tail ints
+    else fst res
 
 takeSummingToAtLeast :: Int -> [Int] -> [Int]
-takeSummingToAtLeast n (x:xs) =
+takeSummingToAtLeast n (x : xs) =
   if x < n
     then x : takeSummingToAtLeast (n - x) xs
     else [x]

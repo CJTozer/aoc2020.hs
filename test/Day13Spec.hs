@@ -1,11 +1,12 @@
-module Day13Spec  where
+module Day13Spec where
 
-import Test.Hspec ( describe, it, shouldBe, Spec )
-import Day13
-    ( earliestBusAfter,
-      parseTimetableForPart2,
-      part2Inner,
-      validPart2 )
+import Day13 (
+  earliestBusAfter,
+  parseTimetableForPart2,
+  part2Inner,
+  validPart2,
+ )
+import Test.Hspec (Spec, describe, it, shouldBe)
 
 spec :: Spec
 spec = do
@@ -21,14 +22,14 @@ spec = do
 
   describe "validPart2" $ do
     it "17,x,13,19 / 3417" $ do
-      validPart2 3417 (parseTimetableForPart2 ["17","x","13","19"]) `shouldBe` True
+      validPart2 3417 (parseTimetableForPart2 ["17", "x", "13", "19"]) `shouldBe` True
     it "67,7,59,61 / 754018" $ do
-      validPart2 754018 (parseTimetableForPart2 ["67","7","59","61"]) `shouldBe` True
+      validPart2 754018 (parseTimetableForPart2 ["67", "7", "59", "61"]) `shouldBe` True
 
   describe "part2Inner" $ do
     it "2,3" $ do
-      part2Inner 1 1 (parseTimetableForPart2 ["2","3"]) `shouldBe` 2
+      part2Inner 1 1 (parseTimetableForPart2 ["2", "3"]) `shouldBe` 2
     it "2,x,x,3" $ do
-      part2Inner 1 1 (parseTimetableForPart2 ["2","x","x","3"]) `shouldBe` 6
+      part2Inner 1 1 (parseTimetableForPart2 ["2", "x", "x", "3"]) `shouldBe` 6
     it "67,7,59,61" $ do
-      part2Inner 1 1 (parseTimetableForPart2 ["67","7","59","61"]) `shouldBe` 754018
+      part2Inner 1 1 (parseTimetableForPart2 ["67", "7", "59", "61"]) `shouldBe` 754018

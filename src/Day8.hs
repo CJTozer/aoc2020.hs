@@ -2,8 +2,8 @@
 
 module Day8 (day8) where
 
-import Text.Regex.TDFA ( (=~) )
 import qualified Data.Set as Set
+import Text.Regex.TDFA ((=~))
 
 data Instruction = Nop Int | Jmp Int | Acc Int deriving (Show)
 
@@ -30,7 +30,8 @@ parseLine s = do
     "acc" -> Acc num
     "jmp" -> Jmp num
     "nop" -> Nop num
-    -- Good option for explicit error here?
+
+-- Good option for explicit error here?
 
 programTick :: (Int, Int) -> [Instruction] -> (Int, Int)
 programTick (ptr, acc) ins =
@@ -43,13 +44,11 @@ runUntilLoop :: (Int, Int) -> [Instruction] -> (Int, Int)
 runUntilLoop state ins = runUntilDuplicate state ins Set.empty
 
 -- Returns ptr > last instruction if terminates
-runUntilDuplicate :: (Int, Int) -> [Instruction] -> Set.Set Int  -> (Int, Int)
+runUntilDuplicate :: (Int, Int) -> [Instruction] -> Set.Set Int -> (Int, Int)
 runUntilDuplicate (ptr, acc) ins hits =
   if Set.member ptr hits || ptr >= length ins
-  then
-    (ptr, acc)
-  else
-    runUntilDuplicate (programTick (ptr, acc) ins) ins (Set.insert ptr hits)
+    then (ptr, acc)
+    else runUntilDuplicate (programTick (ptr, acc) ins) ins (Set.insert ptr hits)
 
 -- Useless? We need the acc too
 doesItTerminate :: (Int, Int) -> [Instruction] -> (Bool, Int)
@@ -63,7 +62,7 @@ runWithNthSwapped n ins = doesItTerminate (0, 0) (swapNth n ins)
 swapNth :: Int -> [Instruction] -> [Instruction]
 swapNth n ins = do
   let h = take n ins
-  let (x:t) = drop n ins
+  let (x : t) = drop n ins
   h ++ swapInstruction x : t
 
 -- Swap Jmp for Nop and vice-versa, leave anything else unchanged
@@ -76,4 +75,4 @@ swapInstruction x =
 
 findSwapThatTerminates :: [Instruction] -> (Bool, Int)
 findSwapThatTerminates ins =
-  head $ filter fst $ map (`runWithNthSwapped` ins) [0..(length ins - 1)]
+  head $ filter fst $ map (`runWithNthSwapped` ins) [0 .. (length ins - 1)]

@@ -1,7 +1,7 @@
 module Day1Spec (spec) where
 
-import Test.Hspec ( describe, it, shouldBe, Spec )
-import Day1 ( findSum2, findSum3, sumTo2020 )
+import Day1 (findSum2, findSum3, sumTo2020)
+import Test.Hspec (Spec, describe, it, shouldBe)
 
 spec :: Spec
 spec = do

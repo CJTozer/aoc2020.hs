@@ -1,7 +1,7 @@
 module Day3Spec (spec) where
 
-import Test.Hspec ( describe, it, shouldBe, Spec )
-import Day3 ( treesWithSlope, treesWithSlope' )
+import Day3 (treesWithSlope, treesWithSlope')
+import Test.Hspec (Spec, describe, it, shouldBe)
 
 spec :: Spec
 spec = do
