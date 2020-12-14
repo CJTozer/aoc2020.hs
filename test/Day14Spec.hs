@@ -1,16 +1,21 @@
 module Day14Spec (spec) where
 
-import Day14 (Instruction (Mask), maskFromString)
+import Day14 (collectAddresses)
 import Test.Hspec (Spec, describe, it, shouldBe)
 
 spec :: Spec
 spec = do
-  describe "maskFromString" $ do
-    it "X" $ do
-      maskFromString "X" `shouldBe` Mask 0 0
-    it "0" $ do
-      maskFromString "0" `shouldBe` Mask 0 1
-    it "1" $ do
-      maskFromString "1" `shouldBe` Mask 1 0
-    it "1X0X1" $ do
-      maskFromString "1X0X1" `shouldBe` Mask 17 4
+  describe "collectAddresses" $ do
+    it "0, 0" $ do
+      collectAddresses "0" "0" `shouldBe` ["0"]
+    it "1, 0" $ do
+      collectAddresses "1" "0" `shouldBe` ["1"]
+    it "0, 1" $ do
+      collectAddresses "0" "1" `shouldBe` ["1"]
+    it "000000000000000000000000000000101010, 000000000000000000000000000000X1001X" $ do
+      collectAddresses "000000000000000000000000000000101010" "000000000000000000000000000000X1001X"
+        `shouldBe` [ "000000000000000000000000000000011010"
+                   , "000000000000000000000000000000011011"
+                   , "000000000000000000000000000000111010"
+                   , "000000000000000000000000000000111011"
+                   ]
