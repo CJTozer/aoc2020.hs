@@ -11,7 +11,7 @@ day1 = do
   let ls = lines contents
   let ns :: [Int] = map read ls
   print $ findSum3 ns
-  putStrLn "day2 end"
+  putStrLn "day1 end"
 
 sumTo2020 :: Int -> Int -> Bool
 sumTo2020 x y = (x + y) == 2020
