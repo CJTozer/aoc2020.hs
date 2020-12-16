@@ -22,9 +22,10 @@ parse s = (rules, my_ticket, other_tickets)
   rules = parseRules rules_part
   my_ticket = parseTicket my_ticket_part
   other_tickets = map parseTicket other_tickets_part
-  rules_part = takeWhile (isInfixOf ":") (lines s)
-  my_ticket_part = "1,2,3,4,5" -- TODO
-  other_tickets_part = ["9,8,7,6,5"] -- TODO
+  rules_part = takeWhile (isInfixOf ":") ls
+  my_ticket_part = getMyTicket ls
+  other_tickets_part = getOtherTickets ls
+  ls = lines s
 
 parseRules :: [String] -> [Rule]
 parseRules = map parseRule
@@ -35,8 +36,20 @@ parseRules = map parseRule
       , ranges = rule_ranges
       }
    where
-    rule_name = "test" -- TODO
-    rule_ranges = [(0, 1)] -- TODO
+    rule_name = takeWhile (/= ':') r
+    rule_ranges = rangesFrom (drop (length rule_name + 2) r)
+     where
+      rangesFrom r = map rangeFrom (splitOn " or " r)
+       where
+        rangeFrom r = (l, u) :: (Int, Int)
+         where
+          (l : u : _) = map read (splitOn "-" r)
 
 parseTicket :: String -> [Int]
-parseTicket s = trace (show (s, splitOn "," s)) map read (splitOn "," s)
+parseTicket s = map read (splitOn "," s)
+
+getMyTicket :: [String] -> String
+getMyTicket ls = dropWhile (\x -> not ("your ticket:" `isInfixOf` x)) ls !! 1
+
+getOtherTickets :: [String] -> [String]
+getOtherTickets ls = tail $ dropWhile (\x -> not ("nearby tickets:" `isInfixOf` x)) ls
