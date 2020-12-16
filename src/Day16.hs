@@ -15,6 +15,9 @@ day16 = do
   contents <- readFile "data/day16"
   let (rules, my_ticket, other_tickets) = parse contents
   print . show $ sum $ collectInvalid other_tickets rules
+  let good_tickets = dropInvalid other_tickets rules
+  print . show $ (length other_tickets, length good_tickets)
+  let valid_positions = validPositions good_tickets rules
   putStrLn "day16 end"
 
 parse :: String -> ([Rule], [Int], [[Int]])
@@ -59,6 +62,13 @@ collectInvalid :: [[Int]] -> [Rule] -> [Int]
 collectInvalid tickets rules =
   filter (`isInvalid` rules) [x | xs <- tickets, x <- xs]
 
+dropInvalid :: [[Int]] -> [Rule] -> [[Int]]
+dropInvalid tickets rules =
+  filter (`allValid` rules) tickets
+
+allValid :: [Int] -> [Rule] -> Bool
+allValid t rules = all (`isValid` rules) t
+
 isInvalid :: Int -> [Rule] -> Bool
 isInvalid val rs = not (isValid val rs)
 
@@ -70,3 +80,17 @@ isValid val (r : rs) = valid || isValid val rs
 
 isInRange :: Int -> (Int, Int) -> Bool
 isInRange val (lower, upper) = val >= lower && val <= upper
+
+validPositions :: [[Int]] -> [Rule] -> [[Int]]
+validPositions tickets = map (validPositions' tickets)
+
+validPositions' :: [[Int]] -> Rule -> [Int]
+validPositions' tickets rule = map snd $ filter fst $ zip valids [0 ..]
+ where
+  valids = validPositions'' tickets rule
+
+validPositions'' :: [[Int]] -> Rule -> [Bool]
+validPositions'' tickets rule =
+  if null (head tickets)
+    then []
+    else all ((`isValid` [rule]) . head) tickets : validPositions'' (map tail tickets) rule
