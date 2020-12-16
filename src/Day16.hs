@@ -2,8 +2,8 @@
 
 module Day16 (day16) where
 
-import Data.List (isInfixOf)
-import Data.List.Split
+import Data.List (any, isInfixOf)
+import Data.List.Split (splitOn)
 import Debug.Trace
 
 type Range = (Int, Int)
@@ -13,7 +13,8 @@ day16 :: IO ()
 day16 = do
   putStrLn "day16 start"
   contents <- readFile "data/day16"
-  print . show $ parse contents
+  let (rules, my_ticket, other_tickets) = parse contents
+  print . show $ sum $ collectInvalid other_tickets rules
   putStrLn "day16 end"
 
 parse :: String -> ([Rule], [Int], [[Int]])
@@ -53,3 +54,19 @@ getMyTicket ls = dropWhile (\x -> not ("your ticket:" `isInfixOf` x)) ls !! 1
 
 getOtherTickets :: [String] -> [String]
 getOtherTickets ls = tail $ dropWhile (\x -> not ("nearby tickets:" `isInfixOf` x)) ls
+
+collectInvalid :: [[Int]] -> [Rule] -> [Int]
+collectInvalid tickets rules =
+  filter (`isInvalid` rules) [x | xs <- tickets, x <- xs]
+
+isInvalid :: Int -> [Rule] -> Bool
+isInvalid val rs = not (isValid val rs)
+
+isValid :: Int -> [Rule] -> Bool
+isValid _ [] = False
+isValid val (r : rs) = valid || isValid val rs
+ where
+  valid = any (isInRange val) (ranges r)
+
+isInRange :: Int -> (Int, Int) -> Bool
+isInRange val (lower, upper) = val >= lower && val <= upper
