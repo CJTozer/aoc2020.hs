@@ -49,7 +49,7 @@ nextStep :: State -> State
 nextStep s =
   Set.filter (`isActiveNextStep` s) all_coords
  where
-  -- TODO work out the right set of coordinates to check
+  -- TODO work out the right set of coordinates to check, based on currently active cells
   all_coords =
     Set.fromList
       [ (w, x, y, z)
@@ -67,7 +67,7 @@ isActiveNextStep p s =
 
 numActiveNeighbours :: Pos -> State -> Int
 numActiveNeighbours p s =
-  Set.size $ Set.intersection s $ allNeigboursOf p
+  Set.size . Set.intersection s . allNeigboursOf $ p
 
 allNeigboursOf :: Pos -> State
 -- TODO implement
