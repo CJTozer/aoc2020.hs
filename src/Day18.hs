@@ -56,6 +56,7 @@ takeUntilClosingBracket n (x : xs) = (x : in_brackets, rem)
     _ -> n
   (in_brackets, rem) = takeUntilClosingBracket n' xs
 
+-- More flexible implementation for part 2
 type Expression = [Part]
 data Part = Add | Mult | Bracketed Expression | Value Int deriving (Show, Eq)
 
