@@ -22,8 +22,6 @@ day18 = do
   print . show . sum . map (getValue . evalExpression . parseExpression) . lines $ contents
   putStrLn "day18 end"
 
--- Accumulate the LHS as we go
--- If you hit a "(" then take everything inside the outermost "()" and evaluate that separately
 doCalc :: String -> Int
 doCalc = subCalc 0 (+)
 

@@ -21,14 +21,14 @@ description:         Please see the README on GitHub at <https://github.com/gith
 
 dependencies:
 - base >= 4.7 && < 5
-- containers
-- regex-tdfa
-- set-extra
 
 library:
   source-dirs: src
   dependencies:
   - split
+  - containers
+  - regex-tdfa
+  - set-extra
 
 executables:
   advent-exe:
@@ -52,3 +52,5 @@ tests:
     dependencies:
     - advent
     - hspec
+    - containers
+    - split

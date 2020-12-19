@@ -11,3 +11,4 @@
 * `Maybe`
 * `Either`
 * Monadic operators `>>=`, `>>`
+* Docstrings?
