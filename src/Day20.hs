@@ -242,7 +242,7 @@ flipAboutY (x, y) = (- x, y)
 allSerpentMatches :: [[Pos]]
 allSerpentMatches =
   map
-    (\f -> map f basicSerpentMatch)
+    (`map` basicSerpentMatch)
     [ id
     , rot90
     , rot180
