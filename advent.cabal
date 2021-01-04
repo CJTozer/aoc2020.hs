@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 67a3c3621c63961c2116a20e82c70ebd4569faf2c799e6a1e25c700118b4a20f
+-- hash: 2365574173c2d6cebde1e2892fa28e38efd22d525a1c892ed035730c83eae153
 
 name:           advent
 version:        0.1.0.0
@@ -58,9 +58,9 @@ library
   hs-source-dirs:
       src
   build-depends:
-      array
-    , base >=4.7 && <5
+      base >=4.7 && <5
     , containers
+    , hashtables
     , regex-tdfa
     , set-extra
     , split
@@ -114,9 +114,9 @@ test-suite advent-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       advent
-    , array
     , base >=4.7 && <5
     , containers
+    , hashtables
     , hspec
     , split
   default-language: Haskell2010

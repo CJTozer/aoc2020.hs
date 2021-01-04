@@ -27,7 +27,7 @@ library:
   dependencies:
   - split
   - containers
-  - array
+  - hashtables
   - regex-tdfa
   - set-extra
 
@@ -54,5 +54,5 @@ tests:
     - advent
     - hspec
     - containers
-    - array
+    - hashtables
     - split

@@ -2,22 +2,23 @@
 
 module Day23 (day23) where
 
-import Data.Array.Unboxed (Array)
-import qualified Data.Array.Unboxed as Array
+import qualified Data.HashTable.IO as H
 import Data.IntMap.Strict (IntMap)
 import qualified Data.IntMap.Strict as IntMap
 import Data.List (elemIndex)
 import Data.List.Split
 import Debug.Trace
 
+type HashTable k v = H.BasicHashTable k v
+
 day23 :: IO ()
 day23 = do
   putStrLn "day23 start"
-  part2
+  -- part2
   part2'
   putStrLn "day23 end"
 
-part2N = 20
+part2N = 10000000
 
 part2Limit = 1000000
 
@@ -163,71 +164,87 @@ takeNFromMap n from m = do
   let next = m IntMap.! from
   from : takeNFromMap (n - 1) next m
 
--- Try an Array-based alternative
--- Does too much memory allocation, even with unboxed arrays
+-- Use mutable map for faster part 2
 part2' :: IO ()
 part2' = do
-  let a = startingArray
+  m <- startingMap'
   let n = part2N
-  print . show . takeNFromArray 30 1 . doNMoves'' n $ a
-  print . show . product . takeNFromArray 3 1 . doNMoves'' n $ a
+  final_map <- doNMoves'' n m
+  final_start <- takeNFromMap' 30 1 final_map
+  print . show $ final_start
+  final_product <- takeNFromMap' 3 1 final_map >>= \x -> return (product x)
+  print . show $ final_product
 
-type ArrayUpdateOp = (Int, Int)
-
-startingArray :: Array Int Int
-startingArray =
+startingMap' :: IO (HashTable Int Int)
+startingMap' =
   -- And add 0 to the start to indicate the current cup is the first cup
-  Array.array (0, length startingPos') links
+  -- Add first cup to the end again to complete the "circle"
+  H.fromList (zip keys values)
   where
-    links = zip ixs elems
-    ixs = 0 : startingPos'
-    elems = startingPos' ++ take 1 startingPos'
+    keys = 0 : startingPos'
+    values = startingPos' ++ take 1 startingPos'
 
-doNMoves'' :: Int -> Array Int Int -> Array Int Int
-doNMoves'' 0 a = a
-doNMoves'' n a = doNMoves'' (n - 1) $ doMove'' a
+takeNFromMap' :: Int -> Int -> HashTable Int Int -> IO [Int]
+takeNFromMap' 1 from _ = return [from]
+takeNFromMap' n from m = do
+  Just next <- H.lookup m from
+  rem <- takeNFromMap' (n - 1) next m
+  return (from : rem)
 
-doMove'' :: Array Int Int -> Array Int Int
-doMove'' a = do
+doNMoves'' :: Int -> HashTable Int Int -> IO (HashTable Int Int)
+doNMoves'' 0 m = return m
+doNMoves'' n m = doMove'' m >>= doNMoves'' (n - 1)
+
+doMove'' :: HashTable Int Int -> IO (HashTable Int Int)
+doMove'' m = do
   -- Get current cup
-  let current = currentCup' a
+  current <- currentCup' m
   -- "Take" next 3 cups
-  let taken = collectThreeAfter' a current
-  -- Gather the operations we need to do - we'll do them all at once for space efficiency
-  let ops = removeTaken' a
+  taken <- collectThreeAfter' m current
+  -- Link current cup to first non-taken cup
+  removeTaken' m
   -- Choose destination cup: highest below current that's not in taken
   let target = insertDest' current taken
   -- Plonk the 3 taken in after this
-  let ops' = replaceTakenAfter' taken target a
-  -- Update the array
-  a Array.// (ops ++ ops')
+  replaceTakenAfter' taken target m
+  -- Update the new current cup
+  setInsertDest' m current
+  -- Give back the final HashTable
+  return m
 
-currentCup' :: Array Int Int -> Int
-currentCup' a = a Array.! 0
+currentCup' :: HashTable Int Int -> IO Int
+currentCup' m = do
+  (Just current) <- H.lookup m 0
+  return current
 
-nextCup' :: Array Int Int -> Int -> Int
-nextCup' a x = a Array.! x
+collectThreeAfter' :: HashTable Int Int -> Int -> IO [Int]
+collectThreeAfter' m x =
+  sequence
+    [ nextCup' m x,
+      nextCup' m x >>= nextCup' m,
+      nextCup' m x >>= nextCup' m >>= nextCup' m
+    ]
 
-collectThreeAfter' :: Array Int Int -> Int -> [Int]
-collectThreeAfter' a x =
-  [ nextCup' a x,
-    nextCup' a . nextCup' a $ x,
-    nextCup' a . nextCup' a . nextCup' a $ x
-  ]
+nextCup' :: HashTable Int Int -> Int -> IO Int
+nextCup' m x = do
+  (Just next) <- H.lookup m x
+  return next
 
--- Next cup will always be the fourth cup
-removeTaken' :: Array Int Int -> [ArrayUpdateOp]
-removeTaken' a = [(currentCup' a, fourth_cup), (0, fourth_cup)]
-  where
-    fourth_cup = nextCup' a . nextCup' a . nextCup' a . nextCup' a $ currentCup' a
+removeTaken' :: HashTable Int Int -> IO ()
+removeTaken' m = do
+  current <- currentCup' m
+  fourth_cup <- nextCup' m current >>= nextCup' m >>= nextCup' m >>= nextCup' m
+  H.insert m current fourth_cup
 
-replaceTakenAfter' :: [Int] -> Int -> Array Int Int -> [ArrayUpdateOp]
-replaceTakenAfter' taken target a =
+replaceTakenAfter' :: [Int] -> Int -> HashTable Int Int -> IO ()
+replaceTakenAfter' taken target m = do
+  after_target <- nextCup' m target
   -- Target now points to first taken
-  [(target, head taken), (last taken, nextCup' a target)]
+  H.insert m target (head taken)
+  -- Last taken now points to one after target
+  H.insert m (last taken) after_target
 
-takeNFromArray :: Int -> Int -> Array Int Int -> [Int]
-takeNFromArray 1 from _ = [from]
-takeNFromArray n from a = do
-  let next = a Array.! from
-  from : takeNFromArray (n - 1) next a
+setInsertDest' :: HashTable Int Int -> Int -> IO ()
+setInsertDest' m current = do
+  new_current <- nextCup' m current
+  H.insert m 0 new_current
