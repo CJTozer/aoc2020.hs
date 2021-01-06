@@ -172,7 +172,7 @@ part2' = do
   final_map <- doNMoves'' n m
   final_start <- takeNFromMap' 30 1 final_map
   print . show $ final_start
-  final_product <- takeNFromMap' 3 1 final_map >>= \x -> return (product x)
+  final_product <- product <$> takeNFromMap' 3 1 final_map
   print . show $ final_product
 
 startingMap' :: IO (HashTable Int Int)
